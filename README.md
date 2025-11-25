@@ -1,12 +1,13 @@
-#Reclama Seguros - Plataforma de Gestión de Seguros de Vida
-Descripción General
+# Reclama Seguros - Plataforma de Gestión de Seguros de Vida
+
+## Descripción General
 Reclama Seguros es una solución digital diseñada para automatizar la identificación y cobro de seguros de vida no reclamados. La plataforma centraliza el proceso de consulta ante las aseguradoras, permitiendo a los usuarios verificar la existencia de pólizas a título personal o de familiares fallecidos mediante un flujo seguro y legal.
 
 
 
 El sistema gestiona el ciclo completo del servicio, desde la captación del usuario y la autorización legal, hasta la radicación de reclamaciones y el seguimiento de indemnizaciones .
 
-#Módulos Funcionales
+## Módulos Funcionales
 La arquitectura de la aplicación se divide en cuatro componentes estratégicos que garantizan la integridad del proceso:
 
 1. Captación y Registro de Usuarios
@@ -59,7 +60,7 @@ Contrato de Mandato: Flujo de firma electrónica secundaria para autorizar la re
 
 Línea de Tiempo: Visualización del progreso de la reclamación, abarcando desde la radicación de documentos hasta la aprobación del pago por parte de la aseguradora .
 
-#Flujo de Navegación
+## Flujo de Navegación
 La experiencia de usuario está diseñada de manera lineal y progresiva:
 
 Consulta: Ingreso de datos y pago del servicio de búsqueda.
@@ -74,5 +75,5 @@ Acción: En caso de éxito, el usuario autoriza la gestión de cobro y aporta la
 Resolución: Visualización de la liquidación y aprobación final de la indemnización.
 
 
-#Privacidad y Seguridad
+## Privacidad y Seguridad
 El sistema contempla la protección de datos sensibles mediante la aceptación explícita de términos y condiciones antes de iniciar cualquier trámite. Asimismo, todas las interacciones con terceros (aseguradoras) están respaldadas por documentos de autorización firmados digitalmente por el titular o beneficiario legítimo
