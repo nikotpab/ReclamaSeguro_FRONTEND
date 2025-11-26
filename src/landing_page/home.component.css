@@ -1,0 +1,156 @@
+/* Contenedor principal que ocupa al menos toda la pantalla visible */
+.hero-container {
+  background-color: #f4f7f6; 
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.content-wrapper {
+  display: flex;
+  flex-wrap: wrap; 
+  max-width: 1200px;
+  width: 100%;
+  gap: 40px;
+  align-items: center;
+}
+
+
+.text-section {
+  flex: 1;
+  min-width: 300px;
+}
+
+.main-title {
+  color: #2c3e50;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+  line-height: 1.2;
+}
+
+.subtitle {
+  color: #58687a;
+  font-size: 1.25rem;
+  font-weight: 400;
+  margin-bottom: 30px;
+}
+
+.trust-badges span {
+  display: inline-block;
+  margin-right: 15px;
+  color: #27ae60;
+  font-weight: 600;
+}
+
+
+.form-section {
+  flex: 1;
+  min-width: 300px;
+  display: flex;
+  justify-content: center; 
+}
+
+.form-card {
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  width: 100%;
+  max-width: 400px;
+}
+
+.form-card h3 {
+  margin-top: 0;
+  color: #333;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  color: #555;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 1rem;
+  box-sizing: border-box;
+  transition: border-color 0.3s;
+}
+
+.form-group input:focus {
+  border-color: #3498db;
+  outline: none;
+}
+
+.form-group input.error-input {
+  border-color: #e74c3c;
+  background-color: #fff5f5;
+}
+
+.error-msg {
+  color: #e74c3c;
+  font-size: 0.8rem;
+  margin-top: 4px;
+  display: block;
+}
+
+
+.cta-button {
+  width: 100%;
+  padding: 15px;
+  background-color: #2980b9; 
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: 10px;
+}
+
+.cta-button:hover {
+  background-color: #1c6ea4;
+}
+
+
+@media (max-width: 768px) {
+  .hero-container {
+    padding: 10px;
+  }
+  
+  .main-title {
+    font-size: 1.8rem;
+    text-align: center;
+  }
+  
+  .subtitle {
+    text-align: center;
+    font-size: 1.1rem;
+  }
+  
+  .content-wrapper {
+    flex-direction: column; /* Apilar verticalmente */
+    gap: 20px;
+  }
+
+  .trust-badges {
+    text-align: center;
+  }
+}
