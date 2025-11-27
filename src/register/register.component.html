@@ -1,0 +1,85 @@
+<div class="wizard-container">
+  
+  <div class="progress-section">
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" style="width: 50%;"></div>
+    </div>
+    <p class="step-indicator">Paso 2 de 4: Creación de cuenta</p>
+  </div>
+
+  <div class="header-section">
+    <h2>Cree su acceso para ver el resultado de la búsqueda.</h2>
+    <p>Asegure que no se pierda el avance de su consulta.</p>
+  </div>
+
+  <form [formGroup]="accountForm" (ngSubmit)="onSubmit()">
+    
+    <div class="form-group">
+      <label>Correo electrónico</label>
+      <input type="email" formControlName="email" class="readonly-input">
+    </div>
+
+    <div class="form-group">
+      <label>Crear contraseña</label>
+      <div class="password-wrapper">
+        <input 
+          [type]="passwordVisible ? 'text' : 'password'" 
+          formControlName="password" 
+          placeholder="Mínimo 6 caracteres" 
+          [class.error]="enviado && f['password'].errors">
+        
+        <button type="button" class="toggle-btn" (click)="togglePasswordVisibility()">
+          {{ passwordVisible ? 'Ocultar' : 'Ver' }}
+        </button>
+      </div>
+      <small *ngIf="enviado && f['password'].errors?.['required']" class="error-msg">
+        La contraseña es requerida.
+      </small>
+      <small *ngIf="enviado && f['password'].errors?.['minlength']" class="error-msg">
+        Mínimo 6 caracteres.
+      </small>
+    </div>
+
+    <div class="form-group">
+      <label>Confirmar contraseña</label>
+      <input 
+        [type]="passwordVisible ? 'text' : 'password'" 
+        formControlName="confirmPassword" 
+        placeholder="Repita su contraseña" 
+        [class.error]="(enviado || f['confirmPassword'].touched) && f['confirmPassword'].errors">
+      
+      <small *ngIf="(enviado || f['confirmPassword'].touched) && f['confirmPassword'].errors?.['required']" class="error-msg">
+        Confirme la contraseña.
+      </small>
+      <small *ngIf="(enviado || f['confirmPassword'].touched) && f['confirmPassword'].errors?.['mismatch']" class="error-msg">
+        Las contraseñas no coinciden.
+      </small>
+    </div>
+
+    <div class="form-group checkbox-group">
+      <input type="checkbox" id="terms" formControlName="terms">
+      <label for="terms">
+        Acepto <a href="#" (click)="abrirModal($event)">términos y condiciones</a> y el tratamiento de datos.
+      </label>
+    </div>
+    <small *ngIf="enviado && f['terms'].errors" class="error-msg center-msg">Debe aceptar los términos para continuar.</small>
+
+    <div class="actions">
+      <button type="submit" class="btn-continuar">Crear cuenta y continuar</button>
+    </div>
+
+  </form>
+</div>
+
+<div class="modal-overlay" *ngIf="mostrarModal">
+  <div class="modal-content">
+    <h3>Términos y Condiciones</h3>
+    <div class="modal-body">
+      <p><strong>Términos y condiciones:</strong> Términos y condiciones</p>
+    </div>
+    <div class="modal-actions">
+      <button type="button" class="btn-secondary" (click)="cerrarModal()">Cerrar</button>
+      <button type="button" class="btn-primary" (click)="aceptarTerminosDesdeModal()">Aceptar y Cerrar</button>
+    </div>
+  </div>
+</div>
