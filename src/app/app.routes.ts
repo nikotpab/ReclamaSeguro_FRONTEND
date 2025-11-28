@@ -5,6 +5,7 @@ import {Register} from '../register/register.component'
 import { Authorization } from '../auth_consultation/auth.component';
 import { Payment } from '../payment/payment.component'; 
 import { Request } from '../request/request.component';
+import { HomeComponent } from '../home_page/home.component';
 
 export const routes: Routes = [
     {path: '', component: ConsultaSegurosComponent},
@@ -13,6 +14,7 @@ export const routes: Routes = [
     {path: 'autorizar', component: Authorization},
     {path: 'pago', component: Payment},
     {path: 'solicitudes', component: Request},
+    {path: 'inicio', component: HomeComponent},
     {path: '**', redirectTo: '' }
     
 ];

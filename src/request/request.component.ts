@@ -14,6 +14,6 @@ export class Request {
   fechaInicio: Date = new Date();
 
   irAlPanel(): void {
-    this.router.navigate(['panel-usuario']);
+    this.router.navigate(['inicio']);
   }
 }
