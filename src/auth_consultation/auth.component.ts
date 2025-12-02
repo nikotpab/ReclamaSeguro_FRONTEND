@@ -1,7 +1,9 @@
-import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { DatosCompartidosService } from '../app/services/shared-data.service';
 
 @Component({
   selector: 'app-paso-tres',
@@ -10,16 +12,19 @@ import { Router } from '@angular/router';
   templateUrl: './auth.component.html',
   styleUrls: ['./auth.component.css']
 })
-export class Authorization implements AfterViewInit {
+export class PasoTresComponent implements AfterViewInit {
   @ViewChild('signatureCanvas') canvasRef!: ElementRef<HTMLCanvasElement>;
   
   signatureForm: FormGroup;
   private cx!: CanvasRenderingContext2D | null;
+  private http = inject(HttpClient);
+  private datosService = inject(DatosCompartidosService);
   
   isDrawing = false;
   hasSigned = false;
   mostrarModal = false;
   enviado = false;
+  isSubmitting = false;
 
   constructor(private fb: FormBuilder, private router: Router) {
     this.signatureForm = this.fb.group({
@@ -44,6 +49,7 @@ export class Authorization implements AfterViewInit {
 
     window.addEventListener('resize', () => {
       const canvasEl = this.canvasRef.nativeElement;
+      const oldImage = canvasEl.toDataURL();
       canvasEl.width = canvasEl.offsetWidth;
       canvasEl.height = canvasEl.offsetHeight;
       
@@ -51,6 +57,10 @@ export class Authorization implements AfterViewInit {
         this.cx.lineWidth = 3;
         this.cx.lineCap = 'round';
         this.cx.strokeStyle = '#000';
+        
+        const img = new Image();
+        img.src = oldImage;
+        img.onload = () => this.cx?.drawImage(img, 0, 0);
       }
     });
   }
@@ -115,14 +125,36 @@ export class Authorization implements AfterViewInit {
     this.enviado = true;
 
     if (this.signatureForm.valid && this.hasSigned) {
-      const backendData = {
-        autorizacion_firmada: true,
-        timestamp: new Date().toISOString()
+      this.isSubmitting = true;
+      
+      const canvasEl = this.canvasRef.nativeElement;
+      const signatureBase64 = canvasEl.toDataURL('image/webp', 0.5);
+
+      const datosUsuario = this.datosService.obtenerDatos();
+      const consultationId = datosUsuario.consultationId;
+
+      if (!consultationId) {
+        alert('Error: No hay ID de consulta. Complete el paso 1 nuevamente.');
+        this.isSubmitting = false;
+        return;
+      }
+
+      const payload = {
+        base64Signature: signatureBase64
       };
-      
-      console.log('Firma enviada:', backendData);
-      
-      this.router.navigate(['pago']);
+
+      this.http.post(`http://localhost:8080/api/consultations/${consultationId}/sign`, payload)
+        .subscribe({
+          next: (res) => {
+            console.log('Firma guardada correctamente:', res);
+            this.router.navigate(['paso-4']);
+          },
+          error: (err) => {
+            console.error('Error al guardar firma:', err);
+            alert('Error al guardar la firma. Intente nuevamente.');
+            this.isSubmitting = false;
+          }
+        });
     }
   }
 
