@@ -12,6 +12,8 @@ import { DatosCompartidosService } from '../app/services/shared-data.service';
   templateUrl: './login-register.component.html',
   styleUrls: ['./login-register.component.css']
 })
+
+
 export class AuthComponent {
   isLoginMode: boolean = true;
   isSubmitting: boolean = false;
@@ -62,12 +64,22 @@ export class AuthComponent {
     this.isSubmitting = true;
     const credentials = this.loginForm.value;
 
-    
-    setTimeout(() => {
-      console.log('Login simulado:', credentials);
-      this.isSubmitting = false;
-      this.router.navigate(['panel-usuario']);
-    }, 1500);
+    this.apiService.login(credentials).subscribe({
+      next: (res: any) => {
+        this.datosService.guardarDatos({ 
+          userId: res.id, 
+          email: res.email 
+        });
+        
+        console.log('Login exitoso:', res);
+        this.router.navigate(['/panel-usuario']);
+      },
+      error: (err) => {
+        console.error(err);
+        alert('Credenciales incorrectas');
+        this.isSubmitting = false;
+      }
+    });
   }
 
   private handleRegister(): void {

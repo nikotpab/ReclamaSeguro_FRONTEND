@@ -26,7 +26,6 @@ export class Payment {
   processPayment(): void {
     this.isProcessing = true;
     
-    // Recuperar ID de la consulta guardada en pasos anteriores
     const datos = this.datosService.obtenerDatos();
     const consultationId = datos.consultationId;
 
@@ -36,14 +35,12 @@ export class Payment {
       return;
     }
 
-    // Llamar al Backend
     this.apiService.processPayment(consultationId).subscribe({
       next: (res) => {
         console.log('Backend:', res);
-        // Simular un pequeño delay para UX
         setTimeout(() => {
           this.isProcessing = false;
-          this.router.navigate(['estado-solicitud']);
+          this.router.navigate(['solicitudes']);
         }, 1500);
       },
       error: (err) => {

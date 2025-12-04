@@ -7,6 +7,11 @@ import { Payment } from '../payment/payment.component';
 import { Request } from '../request/request.component';
 import { HomeComponent } from '../home_page/home.component';
 import { AuthComponent } from '../login_register/login-register.component';
+import { ContratoMandatoComponent } from '../agreement/agreement.component';
+import { SeguimientoReclamoComponent } from '../claim/claim.component';
+import { LiquidacionFinalComponent } from '../liquidation/liquidation.component';
+import { UploadDocumentsComponent } from '../document/upload-documents.component';
+import {PanelUsuarioComponent} from '../user/user.component'
 
 export const routes: Routes = [
     {path: '', component: ConsultaSegurosComponent},
@@ -17,6 +22,10 @@ export const routes: Routes = [
     {path: 'solicitudes', component: Request},
     {path: 'inicio', component: HomeComponent},
     {path: 'autenticacion', component: AuthComponent},
-    {path: '**', redirectTo: '' }
-    
+    {path: 'contrato', component: ContratoMandatoComponent},
+    {path: 'seguimiento', component: SeguimientoReclamoComponent},
+    {path: 'liquidacion', component: LiquidacionFinalComponent},
+    {path: 'carga-documentos', component: UploadDocumentsComponent},
+    {path: 'panel-usuario', component: PanelUsuarioComponent},
+    {path: '**', redirectTo: 'inicio' }
 ];

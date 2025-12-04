@@ -147,7 +147,7 @@ export class Authorization implements AfterViewInit {
         .subscribe({
           next: (res) => {
             console.log('Firma guardada correctamente:', res);
-            this.router.navigate(['paso-4']);
+            this.router.navigate(['pago']);
           },
           error: (err) => {
             console.error('Error al guardar firma:', err);
