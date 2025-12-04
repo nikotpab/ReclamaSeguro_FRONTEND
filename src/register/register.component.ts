@@ -2,7 +2,8 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router } from '@angular/router';
-import { DatosCompartidosService } from '../app/services/shared-data.service'
+import { DatosCompartidosService } from '../app/services/shared-data.service';
+import { ApiService } from '../app/services/api.service'; 
 
 @Component({
   selector: 'app-paso-dos',
@@ -16,13 +17,14 @@ export class Register implements OnInit {
   enviado: boolean = false;
   mostrarModal: boolean = false;
   passwordVisible: boolean = false;
+  isSubmitting: boolean = false; // Para bloquear el botón mientras carga
 
   private datosService = inject(DatosCompartidosService);
+  private apiService = inject(ApiService); // Inyectamos API
+  private router = inject(Router);
+  private fb = inject(FormBuilder);
 
-  constructor(
-    private fb: FormBuilder, 
-    private router: Router
-  ) {
+  constructor() {
     this.accountForm = this.fb.group({
       email: [{ value: '', disabled: true }, [Validators.required]],
       password: ['', [Validators.required, Validators.minLength(6)]],
@@ -32,52 +34,80 @@ export class Register implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.datosService) {
-      const datosGuardados = this.datosService.obtenerDatos();
-      if (datosGuardados && datosGuardados.email) {
-        this.accountForm.patchValue({ email: datosGuardados.email });
-      }
+    const datos = this.datosService.obtenerDatos();
+    if (datos && datos.email) {
+      this.accountForm.patchValue({ email: datos.email });
     }
   }
 
+  // ... (Tus métodos de validación de contraseña, togglePassword, modales van aquí igual que antes) ...
   passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
     const password = control.get('password');
     const confirmPassword = control.get('confirmPassword');
-
-    if (password && confirmPassword && password.value !== confirmPassword.value) {
-      confirmPassword.setErrors({ mismatch: true });
-      return { mismatch: true };
-    } else {
-      if (confirmPassword?.hasError('mismatch')) {
-        confirmPassword.setErrors(null);
-      }
-      return null;
-    }
+    return password && confirmPassword && password.value !== confirmPassword.value ? { mismatch: true } : null;
   }
+  
+  togglePasswordVisibility(): void { this.passwordVisible = !this.passwordVisible; }
+  abrirModal(e: Event) { e.preventDefault(); this.mostrarModal = true; }
+  cerrarModal() { this.mostrarModal = false; }
+  aceptarTerminosDesdeModal() { this.accountForm.patchValue({ terms: true }); this.cerrarModal(); }
 
-  togglePasswordVisibility(): void {
-    this.passwordVisible = !this.passwordVisible;
-  }
-
-  abrirModal(event: Event): void {
-    event.preventDefault();
-    this.mostrarModal = true;
-  }
-
-  cerrarModal(): void {
-    this.mostrarModal = false;
-  }
-
-  aceptarTerminosDesdeModal(): void {
-    this.accountForm.patchValue({ terms: true });
-    this.cerrarModal();
-  }
-
+  // EL CAMBIO IMPORTANTE ESTÁ AQUÍ
   onSubmit(): void {
     this.enviado = true;
+
     if (this.accountForm.valid) {
-      console.log('Cuenta creada:', this.accountForm.getRawValue());
-      this.router.navigate(['autorizar']);
+      this.isSubmitting = true;
+      const datosAcumulados = this.datosService.obtenerDatos();
+      const formValues = this.accountForm.getRawValue(); // raw para obtener el email disabled
+
+      // 1. Preparar datos del Usuario para el Backend
+      const registerData = {
+        email: formValues.email,
+        password: formValues.password,
+        fullName: datosAcumulados.nombre, // Viene de la Landing
+        phone: datosAcumulados.telefono   // Viene de la Landing
+      };
+
+      console.log('Registrando usuario...');
+
+      // 2. Llamada en cadena: Registrar Usuario -> Crear Consulta
+      this.apiService.registerUser(registerData).subscribe({
+        next: (userResponse) => {
+          console.log('Usuario creado ID:', userResponse.id);
+          
+          // 3. Preparar datos de la Consulta con el ID del usuario
+          const consultationData = {
+            userId: userResponse.id,
+            type: datosAcumulados.tipoConsulta || 'PROPIO', // Viene del Paso 1
+            deceasedName: datosAcumulados.nombreFallecido,
+            docType: datosAcumulados.tipoDocumento,
+            docNumber: datosAcumulados.numeroDocumento,
+            deathDate: datosAcumulados.fechaFallecimiento,
+            kinship: datosAcumulados.parentesco
+          };
+
+          this.apiService.createConsultation(consultationData).subscribe({
+            next: (consResponse) => {
+              console.log('Consulta creada ID:', consResponse.id);
+              
+              this.datosService.guardarDatos({ consultationId: consResponse.id });
+              
+              this.router.navigate(['autorizar']);
+            },
+            error: (err) => {
+              console.error('Error creando consulta', err);
+              this.isSubmitting = false;
+              alert('Error al crear el trámite. Intente nuevamente.');
+            }
+          });
+        },
+        error: (err) => {
+          console.error('Error registrando usuario', err);
+          this.isSubmitting = false;
+          alert('El correo ya está registrado o hubo un error.');
+        }
+      });
     }
   }
 

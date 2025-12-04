@@ -10,12 +10,12 @@ export class HomeComponent {
 
   constructor(private router: Router) {}
 
-  // Métodos de navegación
+  
   irALogin(): void {
-    this.router.navigate(['/login']);
+    this.router.navigate(['/autenticacion']);
   }
 
   irARegistro(): void {
-    this.router.navigate(['/register']);
+    this.router.navigate(['/autenticacion']);
   }
 }

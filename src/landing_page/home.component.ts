@@ -23,7 +23,7 @@ export class ConsultaSegurosComponent {
     this.consultaForm = this.fb.group({
       nombre: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
-      telefono: ['', [Validators.required, Validators.pattern('^[0-9]*$')]]
+      telefono: ['', [Validators.required, Validators.pattern('3[0-9]{9}')]]
     });
   }
 

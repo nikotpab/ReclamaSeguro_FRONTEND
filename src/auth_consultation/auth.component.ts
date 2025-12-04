@@ -12,7 +12,7 @@ import { DatosCompartidosService } from '../app/services/shared-data.service';
   templateUrl: './auth.component.html',
   styleUrls: ['./auth.component.css']
 })
-export class PasoTresComponent implements AfterViewInit {
+export class Authorization implements AfterViewInit {
   @ViewChild('signatureCanvas') canvasRef!: ElementRef<HTMLCanvasElement>;
   
   signatureForm: FormGroup;
