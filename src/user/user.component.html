@@ -1,0 +1,28 @@
+<div class="panel-container">
+  <h2>Mis Consultas</h2>
+  
+  <div *ngIf="loading" class="loading">
+    <div class="spinner"></div>
+    <p>Conectando con aseguradoras...</p>
+  </div>
+
+  <div *ngIf="!loading && consultas.length === 0" class="empty-state">
+    <p>No tienes consultas activas.</p>
+    <button class="btn-new" routerLink="/asistente">Iniciar nueva búsqueda</button>
+  </div>
+
+  <div class="cards-grid" *ngIf="!loading && consultas.length > 0">
+    <div class="card-consulta" *ngFor="let c of consultas" (click)="verDetalle(c)">
+      <div class="card-header">
+        <span class="type">{{ c.consultationType }}</span>
+        <span class="date">{{ c.createdAt | date:'shortDate' }}</span>
+      </div>
+      <div class="card-body">
+        <h3>Consulta #{{ c.id }}</h3>
+        <span class="status-badge" [ngClass]="c.status">
+          {{ c.status === 'IN_PROGRESS' ? 'En Curso' : c.status }}
+        </span>
+      </div>
+    </div>
+  </div>
+</div>

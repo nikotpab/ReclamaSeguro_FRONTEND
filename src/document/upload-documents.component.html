@@ -11,7 +11,12 @@
       </div>
       
       <div class="upload-action">
-        <input type="file" [id]="'file-' + doc.id" (change)="onFileSelected($event, doc.id)" hidden>
+        <input 
+          type="file" 
+          [id]="'file-' + doc.id" 
+          (change)="onFileSelected($event, doc.type)" 
+          hidden>
+          
         <label [for]="'file-' + doc.id" class="btn-upload">
           {{ doc.uploaded ? 'Cambiar archivo' : 'Subir archivo' }}
         </label>

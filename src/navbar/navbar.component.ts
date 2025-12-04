@@ -15,6 +15,6 @@ export class NavbarComponent {
 
   logout(): void {
     localStorage.removeItem('datosReclamaSeguro');
-    this.router.navigate(['/auth']);
+    this.router.navigate(['/autenticacion']);
   }
 }

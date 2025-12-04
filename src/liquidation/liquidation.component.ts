@@ -13,7 +13,7 @@ export class LiquidacionFinalComponent {
     valorBruto: 50000000,
     comision: 5000000,
     valorNeto: 45000000,
-    fechaTransferencia: new Date() // Hoy
+    fechaTransferencia: new Date() 
   };
 
   descargarPDF(): void {

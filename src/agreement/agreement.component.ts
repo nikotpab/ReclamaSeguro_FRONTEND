@@ -1,6 +1,8 @@
 import { Component, ViewChild, ElementRef, AfterViewInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { ApiService } from '../app/services/api.service';
+import { DatosCompartidosService } from '../app/services/shared-data.service';
 
 @Component({
   selector: 'app-contrato-mandato',
@@ -13,7 +15,9 @@ export class ContratoMandatoComponent implements AfterViewInit {
   @ViewChild('contractCanvas') canvasRef!: ElementRef<HTMLCanvasElement>;
   private cx!: CanvasRenderingContext2D | null;
   private router = inject(Router);
-  
+  private datosService = inject(DatosCompartidosService);
+  private apiService = inject(ApiService);
+
   isDrawing = false;
   hasSigned = false;
   showModal = false;
@@ -67,9 +71,17 @@ export class ContratoMandatoComponent implements AfterViewInit {
 
   firmar(): void {
     if (this.hasSigned) {
-      // Aquí lógica de backend: guardar firma, mandato_firmado = true
-      console.log('Mandato firmado');
-      this.router.navigate(['/seguimiento']);
+      const canvasEl = this.canvasRef.nativeElement;
+      const signatureBase64 = canvasEl.toDataURL('image/webp', 0.5);
+      const datos = this.datosService.obtenerDatos();
+
+      this.apiService.signMandate(datos.consultationId, signatureBase64).subscribe({
+        next: () => {
+          console.log('Mandato firmado');
+          this.router.navigate(['/seguimiento']);
+        },
+        error: (err) => alert('Error firmando contrato')
+      });
     }
   }
 }
