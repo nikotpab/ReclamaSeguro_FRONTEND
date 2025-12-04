@@ -1,0 +1,65 @@
+<div class="auth-container">
+  <div class="auth-card">
+    
+    <div class="auth-header">
+      <h2>{{ isLoginMode ? 'Iniciar Sesión' : 'Crear Cuenta' }}</h2>
+      <p>{{ isLoginMode ? 'Acceda a su panel de consultas' : 'Regístrese para iniciar un trámite' }}</p>
+    </div>
+
+    <form [formGroup]="isLoginMode ? loginForm : registerForm" (ngSubmit)="onSubmit()">
+      
+      <div *ngIf="!isLoginMode">
+        <div class="form-group">
+          <label>Nombre Completo</label>
+          <input type="text" formControlName="fullName" placeholder="Ej. Juan Pérez"
+                 [class.error]="r['fullName'].touched && r['fullName'].errors">
+        </div>
+
+        <div class="form-group">
+          <label>Teléfono</label>
+          <input type="tel" formControlName="phone" placeholder="Ej. 3001234567"
+                 [class.error]="r['phone'].touched && r['phone'].errors">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Correo Electrónico</label>
+        <input type="email" 
+               [formControlName]="'email'" 
+               placeholder="nombre@correo.com"
+               [class.error]="(isLoginMode ? l['email'].touched && l['email'].errors : r['email'].touched && r['email'].errors)">
+      </div>
+
+      <div class="form-group">
+        <label>Contraseña</label>
+        <div class="password-wrapper">
+          <input [type]="passwordVisible ? 'text' : 'password'" 
+                 [formControlName]="'password'" 
+                 placeholder="••••••••"
+                 [class.error]="(isLoginMode ? l['password'].touched && l['password'].errors : r['password'].touched && r['password'].errors)">
+          <button type="button" class="toggle-btn" (click)="togglePasswordVisibility()">
+            {{ passwordVisible ? 'Ocultar' : 'Ver' }}
+          </button>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-primary" [disabled]="isSubmitting || (isLoginMode ? loginForm.invalid : registerForm.invalid)">
+        <span *ngIf="!isSubmitting">{{ isLoginMode ? 'Ingresar' : 'Registrarme' }}</span>
+        <span *ngIf="isSubmitting" class="spinner"></span>
+      </button>
+
+    </form>
+
+    <div class="auth-footer">
+      <p *ngIf="isLoginMode">
+        ¿No tiene una cuenta? 
+        <a (click)="toggleMode()">Regístrese aquí</a>
+      </p>
+      <p *ngIf="!isLoginMode">
+        ¿Ya tiene cuenta? 
+        <a (click)="toggleMode()">Inicie sesión</a>
+      </p>
+    </div>
+
+  </div>
+</div>
