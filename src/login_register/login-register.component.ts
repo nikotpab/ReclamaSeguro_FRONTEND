@@ -64,6 +64,8 @@ export class AuthComponent {
     this.isSubmitting = true;
     const credentials = this.loginForm.value;
 
+   
+
     this.apiService.login(credentials).subscribe({
       next: (res: any) => {
         this.datosService.guardarDatos({ 
@@ -72,6 +74,10 @@ export class AuthComponent {
         });
         
         console.log('Login exitoso:', res);
+         if(credentials.email=='admin@gmail.com'&&credentials.password=='123456'){
+        this.router.navigate(['/administrador']);
+        return;
+    }
         this.router.navigate(['/panel-usuario']);
       },
       error: (err) => {

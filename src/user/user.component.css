@@ -6,6 +6,7 @@
   font-family: 'Segoe UI', sans-serif;
 }
 
+
 h2 {
   color: #2c3e50;
   font-size: 1.8rem;
@@ -18,8 +19,42 @@ h2 {
 .loading {
   text-align: center;
   color: #7f8c8d;
-  font-size: 1.2rem;
   margin-top: 50px;
+}
+
+.spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border-left-color: #2980b9;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 15px;
+}
+
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+
+.empty-state {
+  text-align: center;
+  padding: 50px;
+  background-color: #fff;
+  border-radius: 12px;
+  border: 2px dashed #e0e0e0;
+  color: #7f8c8d;
+}
+
+.btn-new {
+  background-color: #2980b9;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  margin-top: 15px;
+  cursor: pointer;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-block;
 }
 
 
@@ -48,7 +83,6 @@ h2 {
   border-color: #3498db;
 }
 
-
 .card-header {
   display: flex;
   justify-content: space-between;
@@ -57,9 +91,7 @@ h2 {
   color: #7f8c8d;
   text-transform: uppercase;
   font-weight: 600;
-  letter-spacing: 0.5px;
 }
-
 
 .card-body h3 {
   margin: 0 0 15px 0;
@@ -74,90 +106,96 @@ h2 {
   border-radius: 20px;
   font-size: 0.85rem;
   font-weight: 600;
-  text-transform: capitalize;
 }
 
-
-
-
-.status-badge.IN_PROGRESS {
-  background-color: #ebf5fb;
-  color: #2980b9;
-  border: 1px solid #a9cce3;
+.status-badge.IN_PROGRESS, .status-badge.PAID {
+  background-color: #ebf5fb; color: #2980b9; border: 1px solid #a9cce3;
 }
-
-
-.status-badge.PAID {
-  background-color: #fff8e1;
-  color: #f39c12;
-  border: 1px solid #ffe0b2;
-}
-
 
 .status-badge.FOUND {
-  background-color: #eafaf1;
-  color: #27ae60;
-  border: 1px solid #abebc6;
+  background-color: #eafaf1; color: #27ae60; border: 1px solid #abebc6;
 }
-
 
 .status-badge.NOT_FOUND {
-  background-color: #fdedec;
-  color: #e74c3c;
-  border: 1px solid #fadbd8;
+  background-color: #fdedec; color: #e74c3c; border: 1px solid #fadbd8;
 }
 
-
 .status-badge.CLAIM_STARTED {
-  background-color: #f4ecf7;
-  color: #8e44ad;
-  border: 1px solid #d2b4de;
+  background-color: #f4ecf7; color: #8e44ad; border: 1px solid #d2b4de;
+}
+
+.status-badge.LIQUIDATION_READY {
+  background-color: #fef9e7; color: #f1c40f; border: 1px solid #f9e79f;
 }
 
 
 .card-consulta::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 4px;
-  background-color: #bdc3c7;
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background-color: #bdc3c7;
+}
+.card-consulta:hover::before { background-color: #3498db; }
+
+
+
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 15px;
+  margin-bottom: 30px;
+}
+
+h2 {
+  color: #2c3e50;
+  font-size: 1.8rem;
+  margin: 0;
+  border-bottom: none;
+  padding-bottom: 0;
 }
 
 
-.card-consulta:hover::before {
-  background-color: #3498db;
-}
-
-.empty-state {
-  text-align: center;
-  padding: 50px;
-  background-color: #fff;
-  border-radius: 12px;
-  border: 2px dashed #e0e0e0;
-  color: #7f8c8d;
-}
-
-.btn-new {
+.btn-primary {
   background-color: #2980b9;
   color: white;
   border: none;
   padding: 10px 20px;
   border-radius: 6px;
-  margin-top: 15px;
-  cursor: pointer;
   font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
 
-.spinner {
-  border: 4px solid rgba(0, 0, 0, 0.1);
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  border-left-color: #2980b9;
-  animation: spin 1s linear infinite;
-  margin: 0 auto 15px;
+.btn-primary:hover {
+  background-color: #1c6ea4;
 }
 
-@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+.header-actions {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+
+.btn-cs {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-size: 0.95rem;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.btn-cs:hover {
+  background-color: #c0392b;
+}
