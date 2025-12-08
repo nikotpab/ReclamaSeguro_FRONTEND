@@ -12,6 +12,10 @@ import { SeguimientoReclamoComponent } from '../claim/claim.component';
 import { LiquidacionFinalComponent } from '../liquidation/liquidation.component';
 import { UploadDocumentsComponent } from '../document/upload-documents.component';
 import {PanelUsuarioComponent} from '../user/user.component'
+import {AdminDashboardComponent} from '../admin/admin.component'
+import { authGuard } from './guards/auth.guard';  
+import { adminGuard } from './guards/admin.guard';
+import { WizardComponentRegistered } from '../wizard_registered/wizard-registered.component';
 
 export const routes: Routes = [
     {path: '', component: ConsultaSegurosComponent},
@@ -24,8 +28,10 @@ export const routes: Routes = [
     {path: 'autenticacion', component: AuthComponent},
     {path: 'contrato', component: ContratoMandatoComponent},
     {path: 'seguimiento', component: SeguimientoReclamoComponent},
-    {path: 'liquidacion', component: LiquidacionFinalComponent},
-    {path: 'carga-documentos', component: UploadDocumentsComponent},
-    {path: 'panel-usuario', component: PanelUsuarioComponent},
+    {path: 'liquidacion', component: LiquidacionFinalComponent, canActivate: [authGuard]},
+    {path: 'carga-documentos', component: UploadDocumentsComponent, canActivate: [authGuard]},
+    {path: 'panel-usuario', component: PanelUsuarioComponent, canActivate: [authGuard]},
+    {path: 'administrador', component: AdminDashboardComponent, canActivate: [adminGuard]},
+    {path: 'tipo-solicitud', component: WizardComponentRegistered, canActivate: [authGuard]},
     {path: '**', redirectTo: 'inicio' }
 ];

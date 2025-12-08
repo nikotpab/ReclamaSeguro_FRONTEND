@@ -6,6 +6,9 @@ import { isPlatformBrowser } from '@angular/common';
 })
 export class DatosCompartidosService {
   private isBrowser: boolean;
+  
+  
+  private readonly TIEMPO_EXPIRACION = 20 * 60 * 1000; 
 
   constructor(@Inject(PLATFORM_ID) platformId: Object) {
     this.isBrowser = isPlatformBrowser(platformId);
@@ -13,16 +16,44 @@ export class DatosCompartidosService {
 
   guardarDatos(datos: any) {
     if (this.isBrowser) {
-      const datosActuales = this.obtenerDatos();
-      const nuevosDatos = { ...datosActuales, ...datos };
+      const datosActuales = this.obtenerDatos(false); 
+      
+      const nuevosDatos = { 
+        ...datosActuales, 
+        ...datos,
+        timestamp: new Date().getTime() 
+      };
+      
       localStorage.setItem('datosReclamaSeguro', JSON.stringify(nuevosDatos));
     }
   }
 
-  obtenerDatos() {
+  
+  obtenerDatos(verificarExpiracion: boolean = true) {
     if (this.isBrowser) {
       const datosGuardados = localStorage.getItem('datosReclamaSeguro');
-      return datosGuardados ? JSON.parse(datosGuardados) : {};
+      
+      if (!datosGuardados) return {};
+
+      const datos = JSON.parse(datosGuardados);
+
+      if (verificarExpiracion && datos.timestamp) {
+        const ahora = new Date().getTime();
+        const diferencia = ahora - datos.timestamp;
+
+        
+        if (diferencia > this.TIEMPO_EXPIRACION) {
+          console.log('Sesión expirada por inactividad.');
+          this.limpiarDatos();
+          return {}; 
+        } else {
+          
+          
+          this.actualizarTimestamp(datos);
+        }
+      }
+
+      return datos;
     }
     return {}; 
   }
@@ -30,6 +61,14 @@ export class DatosCompartidosService {
   limpiarDatos() {
     if (this.isBrowser) {
       localStorage.removeItem('datosReclamaSeguro');
+    }
+  }
+
+  
+  private actualizarTimestamp(datos: any) {
+    if (this.isBrowser) {
+      datos.timestamp = new Date().getTime();
+      localStorage.setItem('datosReclamaSeguro', JSON.stringify(datos));
     }
   }
 }

@@ -51,4 +51,20 @@ export class ApiService {
   signMandate(id: number, signatureBase64: string): Observable<any> {
     return this.http.post(`${this.baseUrl}/consultations/${id}/sign-mandate`, { base64Signature: signatureBase64 });
   }
+
+  getAdminStats(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/admin/stats`);
+  }
+
+  getAllConsultations(page: number = 0): Observable<any> {
+    return this.http.get(`${this.baseUrl}/admin/consultations?page=${page}&size=10`);
+  }
+
+  getAdminConsultationDetail(id: number): Observable<any> {
+    return this.http.get(`${this.baseUrl}/admin/consultations/${id}`);
+  }
+
+  updateConsultationStatus(id: number, status: string): Observable<any> {
+    return this.http.put(`${this.baseUrl}/admin/consultations/${id}/status`, { status });
+  }
 }

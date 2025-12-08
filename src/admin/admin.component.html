@@ -1,0 +1,95 @@
+<div class="admin-container">
+  <header>
+    <h1>Panel de Administración</h1>
+  </header>
+
+  <div class="stats-grid">
+    <div class="stat-card blue">
+      <h3>Total Consultas</h3>
+      <p class="number">{{ stats.totalConsultas }}</p>
+    </div>
+    <div class="stat-card orange">
+      <h3>Pendientes</h3>
+      <p class="number">{{ stats.pendientes }}</p>
+    </div>
+    <div class="stat-card green">
+      <h3>Pólizas encontradas</h3>
+      <p class="number">{{ stats.encontradas }}</p>
+    </div>
+    <div class="stat-card purple">
+      <h3>Finalizadas</h3>
+      <p class="number">{{ stats.finalizadas }}</p>
+    </div>
+  </div>
+
+  <div class="table-container">
+    <h2>Listado de trámites</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Usuario</th>
+          <th>Fallecido</th>
+          <th>Fecha</th>
+          <th>Estado</th>
+          <th>Acción</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let c of consultations">
+          <td>#{{ c.id }}</td>
+          <td>{{ c.userName }}</td>
+          <td>{{ c.deceasedName }}</td>
+          <td>{{ c.createdAt | date:'short' }}</td>
+          <td>
+            <span class="badge" [ngClass]="c.status">{{ c.status }}</span>
+          </td>
+          <td>
+            <button class="btn-view" (click)="verDetalle(c.id)">Administrar</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="modal-backdrop" *ngIf="selectedConsultation" (click)="cerrarModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Detalle Consulta #{{ selectedConsultation.id }}</h2>
+        <button class="close-btn" (click)="cerrarModal()">×</button>
+      </div>
+      
+      <div class="modal-body">
+        <div class="info-grid">
+          <div>
+            <label>Nombre Fallecido:</label>
+            <p><strong>{{ selectedConsultation.deceasedName }}</strong></p>
+          </div>
+          <div>
+            <label>Documento:</label>
+            <p>{{ selectedConsultation.docNumber }}</p>
+          </div>
+        </div>
+
+        <div class="signature-section">
+          <label>Firma del Usuario (Desencriptada):</label>
+          <div class="signature-preview">
+            <img *ngIf="selectedConsultation.signatureBase64" 
+                 [src]="selectedConsultation.signatureBase64" 
+                 alt="Firma desencriptada">
+            <p *ngIf="!selectedConsultation.signatureBase64">Sin firma registrada</p>
+          </div>
+        </div>
+
+        <div class="actions-section">
+          <label>Gestionar Estado:</label>
+          <div class="btn-group">
+            <button class="btn-action not-found" (click)="cambiarEstado('NOT_FOUND')">Marcar No Encontrado</button>
+            <button class="btn-action found" (click)="cambiarEstado('FOUND')">Marcar Encontrado</button>
+            <button class="btn-action paid" (click)="cambiarEstado('LIQUIDATION_READY')">Aprobar Liquidación</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
