@@ -5,90 +5,123 @@
 
   <div class="stats-grid">
     <div class="stat-card blue">
-      <h3>Total Consultas</h3>
-      <p class="number">{{ stats.totalConsultas }}</p>
+      <h3>Total</h3>
+      <p class="number">{{ stats().totalConsultas }}</p>
     </div>
     <div class="stat-card orange">
       <h3>Pendientes</h3>
-      <p class="number">{{ stats.pendientes }}</p>
+      <p class="number">{{ stats().pendientes }}</p>
     </div>
     <div class="stat-card green">
-      <h3>Pólizas encontradas</h3>
-      <p class="number">{{ stats.encontradas }}</p>
+      <h3>Encontradas</h3>
+      <p class="number">{{ stats().encontradas }}</p>
     </div>
     <div class="stat-card purple">
       <h3>Finalizadas</h3>
-      <p class="number">{{ stats.finalizadas }}</p>
+      <p class="number">{{ stats().finalizadas }}</p>
     </div>
   </div>
 
   <div class="table-container">
-    <h2>Listado de trámites</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Usuario</th>
-          <th>Fallecido</th>
-          <th>Fecha</th>
-          <th>Estado</th>
-          <th>Acción</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let c of consultations">
-          <td>#{{ c.id }}</td>
-          <td>{{ c.userName }}</td>
-          <td>{{ c.deceasedName }}</td>
-          <td>{{ c.createdAt | date:'short' }}</td>
-          <td>
-            <span class="badge" [ngClass]="c.status">{{ c.status }}</span>
-          </td>
-          <td>
-            <button class="btn-view" (click)="verDetalle(c.id)">Administrar</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <h2>Listado de Trámites</h2>
+
+    <div *ngIf="isLoading()" class="loading-state">
+      <div class="spinner"></div>
+      <p>Cargando datos...</p>
+    </div>
+
+    <div *ngIf="!isLoading()">
+      
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Usuario</th>
+            <th>Nombre solicitante / Fallecido</th>
+            <th>Documento</th>
+            <th>Fecha</th>
+            <th>Estado</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let c of consultations()">
+            <td>#{{ c.id }}</td>
+            <td>{{ c.userName }}</td>
+            <td><strong>{{ c.deceasedName }}</strong></td>
+            <td>{{ c.docNumber }}</td>
+            <td>{{ c.createdAt | date:'short' }}</td>
+            <td>
+              <span class="badge" [ngClass]="c.status">{{ c.status }}</span>
+            </td>
+            <td>
+              <button class="btn-view" (click)="verDetalle(c.id)">Administrar</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div *ngIf="consultations().length === 0" class="empty-msg">
+        No hay trámites registrados.
+      </div>
+
+      <div class="pagination-controls" *ngIf="totalPages > 1">
+          <button (click)="prevPage()" [disabled]="isFirst" class="btn-page">Anterior</button>
+          <span>Página {{ currentPage + 1 }} de {{ totalPages }}</span>
+          <button (click)="nextPage()" [disabled]="isLast" class="btn-page">Siguiente</button>
+      </div>
+
+    </div>
   </div>
 
   <div class="modal-backdrop" *ngIf="selectedConsultation" (click)="cerrarModal()">
     <div class="modal-content" (click)="$event.stopPropagation()">
       <div class="modal-header">
-        <h2>Detalle Consulta #{{ selectedConsultation.id }}</h2>
+        <h2>Trámite #{{ selectedConsultation.id }}</h2>
         <button class="close-btn" (click)="cerrarModal()">×</button>
       </div>
       
       <div class="modal-body">
         <div class="info-grid">
           <div>
-            <label>Nombre Fallecido:</label>
+            <label>Nombre:</label>
             <p><strong>{{ selectedConsultation.deceasedName }}</strong></p>
           </div>
           <div>
             <label>Documento:</label>
             <p>{{ selectedConsultation.docNumber }}</p>
           </div>
+          <div>
+            <label>Email Usuario:</label>
+            <p>{{ selectedConsultation.userName }}</p>
+          </div>
+          <div>
+            <label>Fecha Creación:</label>
+            <p>{{ selectedConsultation.createdAt | date:'medium' }}</p>
+          </div>
         </div>
 
         <div class="signature-section">
-          <label>Firma del Usuario (Desencriptada):</label>
-          <div class="signature-preview">
+          <label>Firma registrada:</label>
+          <div class="signature-box">
             <img *ngIf="selectedConsultation.signatureBase64" 
                  [src]="selectedConsultation.signatureBase64" 
-                 alt="Firma desencriptada">
-            <p *ngIf="!selectedConsultation.signatureBase64">Sin firma registrada</p>
+                 alt="Firma del usuario">
+            <p *ngIf="!selectedConsultation.signatureBase64" class="no-sig">
+               Sin firma digital.
+            </p>
           </div>
         </div>
 
         <div class="actions-section">
           <label>Gestionar Estado:</label>
           <div class="btn-group">
-            <button class="btn-action not-found" (click)="cambiarEstado('NOT_FOUND')">Marcar No Encontrado</button>
-            <button class="btn-action found" (click)="cambiarEstado('FOUND')">Marcar Encontrado</button>
-            <button class="btn-action paid" (click)="cambiarEstado('LIQUIDATION_READY')">Aprobar Liquidación</button>
+            <button class="btn-action not-found" (click)="cambiarEstado('NOT_FOUND')">No Encontrado</button>
+            <button class="btn-action found" (click)="cambiarEstado('FOUND')">Encontrado</button>
+            <button class="btn-action paid" (click)="cambiarEstado('LIQUIDATION_READY')">Aprobar Pago</button>
           </div>
         </div>
+
       </div>
     </div>
   </div>
