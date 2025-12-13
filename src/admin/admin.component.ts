@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; 
 import { ApiService } from '../app/services/api.service';
@@ -12,90 +12,80 @@ import { ApiService } from '../app/services/api.service';
 })
 export class AdminDashboardComponent implements OnInit {
   private api = inject(ApiService);
+  private ngZone = inject(NgZone);
   
-  
-  stats: any = { 
-    totalConsultas: 0, 
-    pendientes: 0, 
-    encontradas: 0, 
-    finalizadas: 0 
-  };
-
-  
-  consultations: any[] = [];
+  stats = signal<any>({ totalConsultas: 0, pendientes: 0, encontradas: 0, finalizadas: 0 });
+  consultations = signal<any[]>([]);
+  isLoading = signal<boolean>(true); 
   
   
   selectedConsultation: any = null; 
-  
-  
-  isLoading: boolean = true;
-
-  
   currentPage: number = 0;
   totalPages: number = 0;
   isFirst: boolean = true;
   isLast: boolean = false;
-  pageSize: number = 10; 
 
   ngOnInit(): void {
     this.loadStats();
-    this.loadConsultations(0); 
+    this.loadConsultations(0);
   }
-
-  
 
   loadStats(): void {
     this.api.getAdminStats().subscribe({
-      next: (data) => this.stats = data,
-      error: (err) => console.error('Error cargando estadísticas', err)
+      next: (data) => {
+        
+        this.ngZone.run(() => { 
+          this.stats.set(data); 
+        });
+      },
+      error: (e) => console.error('Error cargando stats', e)
     });
   }
 
   loadConsultations(page: number): void {
-    this.isLoading = true;
-    
+    this.isLoading.set(true); 
     
     this.api.getAllConsultations(page).subscribe({
       next: (response: any) => {
-        
-        this.consultations = response.content; 
-        this.currentPage = response.number;
-        this.totalPages = response.totalPages;
-        this.isFirst = response.first;
-        this.isLast = response.last;
-        
-        this.isLoading = false;
+        this.ngZone.run(() => {
+          console.log('Datos recibidos en Admin:', response.content);
+          
+          
+          this.consultations.set(response.content);
+          
+          
+          this.currentPage = response.number;
+          this.totalPages = response.totalPages;
+          this.isFirst = response.first;
+          this.isLast = response.last;
+          
+          
+          this.isLoading.set(false);
+        });
       },
       error: (err) => {
-        console.error('Error cargando la tabla', err);
-        this.isLoading = false;
+        console.error('Error cargando tabla:', err);
+        this.ngZone.run(() => { this.isLoading.set(false); });
       }
     });
   }
 
   
-
   prevPage(): void {
-    if (!this.isFirst) {
-      this.loadConsultations(this.currentPage - 1);
-    }
+    if (!this.isFirst) this.loadConsultations(this.currentPage - 1);
   }
 
   nextPage(): void {
-    if (!this.isLast) {
-      this.loadConsultations(this.currentPage + 1);
-    }
+    if (!this.isLast) this.loadConsultations(this.currentPage + 1);
   }
 
   
-
   verDetalle(id: number): void {
-    
     this.api.getAdminConsultationDetail(id).subscribe({
       next: (data) => {
-        this.selectedConsultation = data;
+        this.ngZone.run(() => { this.selectedConsultation = data; });
       },
-      error: (err) => alert('Error cargando el detalle del trámite.')
+      error: (err) => alert('Error cargando detalle: ' + err.message)
     });
   }
 
@@ -104,25 +94,21 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   
-
   cambiarEstado(nuevoEstado: string): void {
     if (!this.selectedConsultation) return;
     
-    const confirmacion = confirm(`¿Estás seguro de cambiar el estado a ${nuevoEstado}? El usuario verá este cambio inmediatamente.`);
-    
-    if(confirmacion) {
+    if(confirm(`¿Confirmas cambiar el estado a ${nuevoEstado}?`)) {
       this.api.updateConsultationStatus(this.selectedConsultation.id, nuevoEstado).subscribe({
         next: () => {
-          
-          this.selectedConsultation.status = nuevoEstado;
-          
-          
-          this.loadConsultations(this.currentPage);
-          
-          alert('Estado actualizado correctamente.');
-          this.cerrarModal();
+          this.ngZone.run(() => {
+             this.selectedConsultation.status = nuevoEstado;
+             alert('Estado actualizado correctamente.');
+             this.cerrarModal();
+             
+             this.loadConsultations(this.currentPage);
+          });
         },
-        error: (err) => alert('Error al actualizar el estado.')
+        error: () => alert('Error al actualizar estado.')
       });
     }
   }

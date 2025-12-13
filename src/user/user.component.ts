@@ -74,7 +74,7 @@ export class PanelUsuarioComponent implements OnInit {
         this.router.navigate(['/liquidacion']);
         break;
       default:
-        this.router.navigate(['/estado-solicitud']);
+        this.router.navigate(['/solicitudes']);
     }
   }
 }

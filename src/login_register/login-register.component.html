@@ -10,9 +10,15 @@
       
       <div *ngIf="!isLoginMode">
         <div class="form-group">
-          <label>Nombre Completo</label>
+          <label>Nombre completo</label>
           <input type="text" formControlName="fullName" placeholder="Ej. Juan Pérez"
                  [class.error]="r['fullName'].touched && r['fullName'].errors">
+        </div>
+
+       <div class="form-group">
+          <label>Cédula</label>
+          <input type="text" formControlName="cedula" placeholder="Ej. 1012345678"
+                 [class.error]="r['cedula'].touched && r['cedula'].errors">
         </div>
 
         <div class="form-group">
@@ -23,10 +29,10 @@
       </div>
 
       <div class="form-group">
-        <label>Correo Electrónico</label>
+        <label>Correo electrónico</label>
         <input type="email" 
                [formControlName]="'email'" 
-               placeholder="nombre@correo.com"
+               placeholder="Ej. nombre@correo.com"
                [class.error]="(isLoginMode ? l['email'].touched && l['email'].errors : r['email'].touched && r['email'].errors)">
       </div>
 

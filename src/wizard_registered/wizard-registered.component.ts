@@ -52,10 +52,9 @@ export class WizardComponentRegistered {
     }
   }
 
-  onSubmit(): void {
+ onSubmit(): void {
     this.enviado = true;
 
-    
     
     if (this.tipoConsulta === 'fallecido' && this.consultaForm.invalid) {
       return;
@@ -74,17 +73,35 @@ export class WizardComponentRegistered {
 
     const formValues = this.consultaForm.value;
     
+    
+    
+    let nombreFinal = '';
+    let docFinal = '';
+    let parentezcoFinal = '';
+
+    if (formValues.tipoConsulta === 'propio') {
+      
+      nombreFinal = datosUsuario.fullName ? datosUsuario.fullName + ' (Propio)' : 'Consulta a Título Personal';
+      docFinal = 'CC'; 
+      parentezcoFinal = 'YO';
+    } else {
+      
+      nombreFinal = formValues.nombreFallecido;
+      docFinal = formValues.numeroDocumento;
+      parentezcoFinal = formValues.parentesco;
+    }
+
     const consultationData = {
       userId: datosUsuario.userId,
-      type: formValues.tipoConsulta,
-      deceasedName: formValues.nombreFallecido,
-      docType: formValues.tipoDocumento,
-      docNumber: formValues.numeroDocumento,
-      deathDate: formValues.fechaFallecimiento,
-      kinship: formValues.parentesco
+      type: formValues.tipoConsulta, 
+      deceasedName: nombreFinal,     
+      docType: formValues.tipoDocumento || 'CC',
+      docNumber: docFinal,           
+      deathDate: formValues.fechaFallecimiento, 
+      kinship: parentezcoFinal
     };
 
-    console.log('Enviando consulta...', consultationData);
+    console.log('Enviando consulta corregida...', consultationData);
 
     this.api.createConsultation(consultationData).subscribe({
       next: (res: any) => {
@@ -92,10 +109,10 @@ export class WizardComponentRegistered {
         
         this.datosService.guardarDatos({ 
           consultationId: res.id,
-          nombreFallecido: formValues.nombreFallecido 
+          nombreFallecido: nombreFinal 
         });
 
-        this.router.navigate(['autorizar']);
+        this.router.navigate(['/autorizar']);
       },
       error: (err: any) => {
         console.error(err);
