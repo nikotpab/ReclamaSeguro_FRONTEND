@@ -6,6 +6,10 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ApiService {
+  put: any;
+  post(arg0: string, payload: { email: string; code: string; }) {
+    throw new Error('Method not implemented.');
+  }
   private http = inject(HttpClient);
   private baseUrl = 'http://localhost:8080/api';
 
@@ -18,6 +22,9 @@ export class ApiService {
     return this.http.post(`${this.baseUrl}/auth/login`, data);
   }
 
+  verifyUser(data: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/auth/verify`, data);
+  }
 
   createConsultation(data: any): Observable<any> {
     return this.http.post(`${this.baseUrl}/consultations/create`, data);
@@ -64,7 +71,16 @@ export class ApiService {
     return this.http.get(`${this.baseUrl}/admin/consultations/${id}`);
   }
 
-  updateConsultationStatus(id: number, status: string): Observable<any> {
-    return this.http.put(`${this.baseUrl}/admin/consultations/${id}/status`, { status });
+  updateConsultationStatus(id: number, payload: any): Observable<any> {
+    const body = typeof payload === 'string' ? { status: payload } : payload;
+    return this.http.put(`${this.baseUrl}/admin/consultations/${id}/status`, body);
+  }
+
+  forgotPassword(email: string): Observable<any> {
+    return this.http.post(`${this.baseUrl}/auth/forgot-password`, { email });
+  }
+
+  resetPassword(data: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/auth/reset-password`, data);
   }
 }

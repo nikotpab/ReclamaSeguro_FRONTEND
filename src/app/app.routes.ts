@@ -9,7 +9,7 @@ import { HomeComponent } from '../home_page/home.component';
 import { AuthComponent } from '../login_register/login-register.component';
 import { ContratoMandatoComponent } from '../agreement/agreement.component';
 import { SeguimientoReclamoComponent } from '../claim/claim.component';
-import { LiquidacionFinalComponent } from '../liquidation/liquidation.component';
+import { LiquidationComponent } from '../liquidation/liquidation.component';
 import { UploadDocumentsComponent } from '../document/upload-documents.component';
 import {PanelUsuarioComponent} from '../user/user.component'
 import {AdminDashboardComponent} from '../admin/admin.component'
@@ -28,7 +28,7 @@ export const routes: Routes = [
     {path: 'autenticacion', component: AuthComponent},
     {path: 'contrato', component: ContratoMandatoComponent},
     {path: 'seguimiento', component: SeguimientoReclamoComponent},
-    {path: 'liquidacion', component: LiquidacionFinalComponent, canActivate: [authGuard]},
+    {path: 'liquidacion', component: LiquidationComponent, canActivate: [authGuard]},
     {path: 'carga-documentos', component: UploadDocumentsComponent, canActivate: [authGuard]},
     {path: 'panel-usuario', component: PanelUsuarioComponent, canActivate: [authGuard]},
     {path: 'administrador', component: AdminDashboardComponent, canActivate: [adminGuard]},
