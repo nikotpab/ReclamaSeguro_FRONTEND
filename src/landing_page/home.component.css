@@ -1,156 +1,122 @@
-/* Contenedor principal que ocupa al menos toda la pantalla visible */
 .hero-container {
-  background-color: #f4f7f6; 
-  min-height: 100vh;
+  min-height: calc(100vh - 70px);
+  background: linear-gradient(135deg, var(--bg-body) 0%, #e0f2fe 100%);
+
   display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 20px;
-  box-sizing: border-box;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding: var(--spacing-xl);
 }
 
 .content-wrapper {
-  display: flex;
-  flex-wrap: wrap; 
   max-width: 1200px;
-  width: 100%;
-  gap: 40px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
   align-items: center;
 }
 
-
 .text-section {
-  flex: 1;
-  min-width: 300px;
+  padding-right: 2rem;
 }
 
 .main-title {
-  color: #2c3e50;
-  font-size: 2.5rem;
-  font-weight: 700;
-  margin-bottom: 20px;
-  line-height: 1.2;
+  font-size: 3.5rem;
+  line-height: 1.1;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: var(--spacing-lg);
+  letter-spacing: -0.025em;
 }
 
 .subtitle {
-  color: #58687a;
   font-size: 1.25rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin-bottom: 2.5rem;
   font-weight: 400;
-  margin-bottom: 30px;
+}
+
+.trust-badges {
+  display: flex;
+  gap: 1.5rem;
 }
 
 .trust-badges span {
-  display: inline-block;
-  margin-right: 15px;
-  color: #27ae60;
+  background: var(--bg-card);
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
   font-weight: 600;
+  color: var(--primary);
+  font-size: 0.875rem;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 
 .form-section {
-  flex: 1;
-  min-width: 300px;
   display: flex;
-  justify-content: center; 
+  justify-content: center;
 }
 
 .form-card {
-  background: white;
-  padding: 30px;
-  border-radius: 10px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  background: var(--bg-card);
+  padding: 2.5rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
   width: 100%;
-  max-width: 400px;
+  max-width: 450px;
 }
 
 .form-card h3 {
-  margin-top: 0;
-  color: #333;
+  margin-bottom: var(--spacing-xl);
+  font-size: 1.5rem;
   text-align: center;
-  margin-bottom: 20px;
+  color: var(--text-main);
 }
-
-.form-group {
-  margin-bottom: 15px;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 5px;
-  color: #555;
-  font-weight: 500;
-  font-size: 0.9rem;
-}
-
-.form-group input {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  font-size: 1rem;
-  box-sizing: border-box;
-  transition: border-color 0.3s;
-}
-
-.form-group input:focus {
-  border-color: #3498db;
-  outline: none;
-}
-
-.form-group input.error-input {
-  border-color: #e74c3c;
-  background-color: #fff5f5;
-}
-
-.error-msg {
-  color: #e74c3c;
-  font-size: 0.8rem;
-  margin-top: 4px;
-  display: block;
-}
-
 
 .cta-button {
   width: 100%;
-  padding: 15px;
-  background-color: #2980b9; 
+  padding: 1rem;
+  background-color: var(--primary);
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   font-size: 1.1rem;
-  font-weight: bold;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s;
-  margin-top: 10px;
+  transition: background-color 0.2s, transform 0.1s;
+  margin-top: 1rem;
 }
 
 .cta-button:hover {
-  background-color: #1c6ea4;
+  background-color: var(--primary-dark);
+  transform: translateY(-1px);
+}
+
+.cta-button:active {
+  transform: translateY(0);
 }
 
 
-@media (max-width: 768px) {
-  .hero-container {
-    padding: 10px;
-  }
-  
-  .main-title {
-    font-size: 1.8rem;
-    text-align: center;
-  }
-  
-  .subtitle {
-    text-align: center;
-    font-size: 1.1rem;
-  }
-  
+@media (max-width: 960px) {
   .content-wrapper {
-    flex-direction: column; /* Apilar verticalmente */
-    gap: 20px;
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: 3rem;
+  }
+
+  .text-section {
+    padding-right: 0;
   }
 
   .trust-badges {
-    text-align: center;
+    justify-content: center;
+  }
+
+  .main-title {
+    font-size: 2.5rem;
   }
 }

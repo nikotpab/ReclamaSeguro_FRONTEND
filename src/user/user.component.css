@@ -1,24 +1,22 @@
-
 .panel-container {
   max-width: 1200px;
   margin: 40px auto;
-  padding: 0 20px;
-  font-family: 'Segoe UI', sans-serif;
+  padding: 0 var(--spacing-md);
 }
 
 
 h2 {
-  color: #2c3e50;
+  color: var(--text-main);
   font-size: 1.8rem;
-  margin-bottom: 30px;
-  border-bottom: 2px solid #eee;
+  margin-bottom: var(--spacing-xl);
+  border-bottom: 2px solid var(--border-light);
   padding-bottom: 10px;
 }
 
 
 .loading {
   text-align: center;
-  color: #7f8c8d;
+  color: var(--text-muted);
   margin-top: 50px;
 }
 
@@ -27,75 +25,88 @@ h2 {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  border-left-color: #2980b9;
+  border-left-color: var(--primary);
   animation: spin 1s linear infinite;
   margin: 0 auto 15px;
 }
 
-@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
 
 
 .empty-state {
   text-align: center;
   padding: 50px;
-  background-color: #fff;
-  border-radius: 12px;
-  border: 2px dashed #e0e0e0;
-  color: #7f8c8d;
+  background-color: var(--bg-card);
+  border-radius: var(--radius-lg);
+  border: 2px dashed var(--border-medium);
+  color: var(--text-muted);
 }
 
 .btn-new {
-  background-color: #2980b9;
+  background-color: var(--primary);
   color: white;
   border: none;
   padding: 10px 20px;
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   margin-top: 15px;
   cursor: pointer;
   font-weight: 600;
   text-decoration: none;
   display: inline-block;
+  transition: background-color 0.2s;
+}
+
+.btn-new:hover {
+  background-color: var(--primary-dark);
 }
 
 
 .cards-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 25px;
+  gap: var(--spacing-lg);
 }
 
 
 .card-consulta {
-  background: white;
-  border: 1px solid #e0e0e0;
-  border-radius: 12px;
-  padding: 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
   cursor: pointer;
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  box-shadow: var(--shadow-sm);
 }
 
 .card-consulta:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-  border-color: #3498db;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--primary);
 }
 
 .card-header {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 15px;
+  margin-bottom: var(--spacing-md);
   font-size: 0.85rem;
-  color: #7f8c8d;
+  color: var(--text-light);
   text-transform: uppercase;
   font-weight: 600;
 }
 
 .card-body h3 {
-  margin: 0 0 15px 0;
-  color: #2c3e50;
+  margin: 0 0 var(--spacing-md) 0;
+  color: var(--text-main);
   font-size: 1.3rem;
 }
 
@@ -103,36 +114,56 @@ h2 {
 .status-badge {
   display: inline-block;
   padding: 6px 12px;
-  border-radius: 20px;
+  border-radius: 9999px;
   font-size: 0.85rem;
   font-weight: 600;
 }
 
-.status-badge.IN_PROGRESS, .status-badge.PAID {
-  background-color: #ebf5fb; color: #2980b9; border: 1px solid #a9cce3;
+.status-badge.IN_PROGRESS,
+.status-badge.PAID {
+  background-color: #ebf5fb;
+  color: var(--info);
+  border: 1px solid #a9cce3;
 }
 
 .status-badge.FOUND {
-  background-color: #eafaf1; color: #27ae60; border: 1px solid #abebc6;
+  background-color: #eafaf1;
+  color: var(--success);
+  border: 1px solid #abebc6;
 }
 
 .status-badge.NOT_FOUND {
-  background-color: #fdedec; color: #e74c3c; border: 1px solid #fadbd8;
+  background-color: #fdedec;
+  color: var(--danger);
+  border: 1px solid #fadbd8;
 }
 
 .status-badge.CLAIM_STARTED {
-  background-color: #f4ecf7; color: #8e44ad; border: 1px solid #d2b4de;
+  background-color: #f4ecf7;
+  color: #8e44ad;
+  border: 1px solid #d2b4de;
 }
 
 .status-badge.LIQUIDATION_READY {
-  background-color: #fef9e7; color: #f1c40f; border: 1px solid #f9e79f;
+  background-color: #fef9e7;
+  color: #d97706;
+  border: 1px solid #f9e79f;
 }
 
 
 .card-consulta::before {
-  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background-color: #bdc3c7;
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background-color: var(--border-medium);
 }
-.card-consulta:hover::before { background-color: #3498db; }
+
+.card-consulta:hover::before {
+  background-color: var(--primary);
+}
 
 
 
@@ -141,13 +172,13 @@ h2 {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 2px solid #eee;
+  border-bottom: 2px solid var(--border-light);
   padding-bottom: 15px;
   margin-bottom: 30px;
 }
 
 h2 {
-  color: #2c3e50;
+  color: var(--text-main);
   font-size: 1.8rem;
   margin: 0;
   border-bottom: none;
@@ -156,11 +187,11 @@ h2 {
 
 
 .btn-primary {
-  background-color: #2980b9;
+  background-color: var(--primary);
   color: white;
   border: none;
   padding: 10px 20px;
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   font-weight: 600;
   text-decoration: none;
   cursor: pointer;
@@ -172,7 +203,7 @@ h2 {
 }
 
 .btn-primary:hover {
-  background-color: #1c6ea4;
+  background-color: var(--primary-dark);
 }
 
 
@@ -184,18 +215,17 @@ h2 {
 
 
 .btn-cs {
-  background-color: #e74c3c;
+  background-color: var(--danger);
   color: white;
   border: none;
   padding: 10px 20px;
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.3s ease;
   font-size: 0.95rem;
-  font-family: 'Segoe UI', sans-serif;
 }
 
 .btn-cs:hover {
-  background-color: #c0392b;
+  background-color: #b91c1c;
 }

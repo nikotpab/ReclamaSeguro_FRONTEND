@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { DatosCompartidosService } from '../app/services/shared-data.service'; 
+import { DatosCompartidosService } from '../app/services/shared-data.service';
 
 @Component({
   selector: 'app-consulta-seguros',
@@ -16,9 +16,9 @@ export class ConsultaSegurosComponent {
   enviado: boolean = false;
 
   constructor(
-    private fb: FormBuilder, 
+    private fb: FormBuilder,
     private router: Router,
-    private datosService: DatosCompartidosService 
+    private datosService: DatosCompartidosService
   ) {
     this.consultaForm = this.fb.group({
       nombre: ['', [Validators.required, Validators.minLength(3)]],
@@ -31,9 +31,9 @@ export class ConsultaSegurosComponent {
     this.enviado = true;
 
     if (this.consultaForm.valid) {
-    console.log('Guardando datos...', this.consultaForm.value);
-    this.datosService.guardarDatos(this.consultaForm.value);
-    this.router.navigate(['asistente']);
+
+      this.datosService.guardarDatos(this.consultaForm.value);
+      this.router.navigate(['asistente']);
     }
   }
 

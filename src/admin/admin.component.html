@@ -31,7 +31,7 @@
     </div>
 
     <div *ngIf="!isLoading()">
-      
+
       <table>
         <thead>
           <tr>
@@ -66,9 +66,9 @@
       </div>
 
       <div class="pagination-controls" *ngIf="totalPages > 1">
-          <button (click)="prevPage()" [disabled]="isFirst" class="btn-page">Anterior</button>
-          <span>Página {{ currentPage + 1 }} de {{ totalPages }}</span>
-          <button (click)="nextPage()" [disabled]="isLast" class="btn-page">Siguiente</button>
+        <button (click)="prevPage()" [disabled]="isFirst" class="btn-page">Anterior</button>
+        <span>Página {{ currentPage + 1 }} de {{ totalPages }}</span>
+        <button (click)="nextPage()" [disabled]="isLast" class="btn-page">Siguiente</button>
       </div>
 
     </div>
@@ -80,7 +80,7 @@
         <h2>Trámite #{{ selectedConsultation.id }}</h2>
         <button class="close-btn" (click)="cerrarModal()">×</button>
       </div>
-      
+
       <div class="modal-body">
         <div class="info-grid">
           <div>
@@ -104,16 +104,44 @@
         <div class="signature-section">
           <label>Firma registrada:</label>
           <div class="signature-box">
-            <img *ngIf="selectedConsultation.signatureBase64" 
-                 [src]="selectedConsultation.signatureBase64" 
-                 alt="Firma del usuario">
+            <img *ngIf="selectedConsultation.signatureBase64" [src]="selectedConsultation.signatureBase64"
+              alt="Firma del usuario">
             <p *ngIf="!selectedConsultation.signatureBase64" class="no-sig">
-               Sin firma digital.
+              Sin firma digital.
             </p>
           </div>
         </div>
 
-        <div class="actions-section">
+        <div class="liquidation-calculator" *ngIf="showLiquidationCalculator">
+          <h3>Calculadora de Liquidación</h3>
+          <div class="calc-row">
+            <label>Monto Bruto Recuperado:</label>
+            <input type="number" [(ngModel)]="liquidationGross" (ngModelChange)="calculateLiquidation()"
+              class="input-money" placeholder="0">
+          </div>
+
+          <div class="calc-results">
+            <div class="result-item">
+              <span>Monto Bruto:</span>
+              <span>$ {{ liquidationGross | number }}</span>
+            </div>
+            <div class="result-item minus">
+              <span>Comisión (10%):</span>
+              <span>- $ {{ liquidationCommission | number }}</span>
+            </div>
+            <div class="result-item total">
+              <span>Neto a Pagar:</span>
+              <span>$ {{ liquidationNet | number }}</span>
+            </div>
+          </div>
+
+          <div class="calc-actions">
+            <button class="btn-confirm-pay" (click)="confirmLiquidation()">Confirmar y Aprobar</button>
+            <button class="btn-cancel" (click)="showLiquidationCalculator = false">Cancelar</button>
+          </div>
+        </div>
+
+        <div class="actions-section" *ngIf="!showLiquidationCalculator">
           <label>Gestionar Estado:</label>
           <div class="btn-group">
             <button class="btn-action not-found" (click)="cambiarEstado('NOT_FOUND')">No Encontrado</button>

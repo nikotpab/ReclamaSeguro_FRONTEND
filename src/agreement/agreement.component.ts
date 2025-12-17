@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { ApiService } from '../app/services/api.service';
 import { DatosCompartidosService } from '../app/services/shared-data.service';
+import { NotificationService } from '../app/services/notification.service';
 
 @Component({
   selector: 'app-contrato-mandato',
@@ -17,6 +18,7 @@ export class ContratoMandatoComponent implements AfterViewInit {
   private router = inject(Router);
   private datosService = inject(DatosCompartidosService);
   private apiService = inject(ApiService);
+  private notification = inject(NotificationService);
 
   isDrawing = false;
   hasSigned = false;
@@ -55,7 +57,7 @@ export class ContratoMandatoComponent implements AfterViewInit {
 
   stopDrawing(): void { this.isDrawing = false; this.cx?.closePath(); }
 
-  getPos(e: any): {x: number, y: number} {
+  getPos(e: any): { x: number, y: number } {
     const rect = this.canvasRef.nativeElement.getBoundingClientRect();
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
     const clientY = e.touches ? e.touches[0].clientY : e.clientY;
@@ -65,7 +67,7 @@ export class ContratoMandatoComponent implements AfterViewInit {
   toggleModal(val: boolean): void { this.showModal = val; }
 
   clearSignature(): void {
-    this.cx?.clearRect(0,0, this.canvasRef.nativeElement.width, this.canvasRef.nativeElement.height);
+    this.cx?.clearRect(0, 0, this.canvasRef.nativeElement.width, this.canvasRef.nativeElement.height);
     this.hasSigned = false;
   }
 
@@ -77,10 +79,9 @@ export class ContratoMandatoComponent implements AfterViewInit {
 
       this.apiService.signMandate(datos.consultationId, signatureBase64).subscribe({
         next: () => {
-          console.log('Mandato firmado');
           this.router.navigate(['/seguimiento']);
         },
-        error: (err) => alert('Error firmando contrato')
+        error: (err) => this.notification.showError('No se pudo firmar el contrato. Por favor intenta más tarde.')
       });
     }
   }

@@ -1,21 +1,23 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { ApiService } from '../app/services/api.service'; 
+import { ApiService } from '../app/services/api.service';
 import { DatosCompartidosService } from '../app/services/shared-data.service';
+import { NotificationService } from '../app/services/notification.service';
 
 @Component({
-  selector: 'app-upload-documents', 
+  selector: 'app-upload-documents',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './upload-documents.component.html',
   styleUrls: ['./upload-documents.component.css']
 })
-export class UploadDocumentsComponent { 
+export class UploadDocumentsComponent {
   private router = inject(Router);
   private apiService = inject(ApiService);
   private datosService = inject(DatosCompartidosService);
-  
+  private notification = inject(NotificationService);
+
 
   docs = [
     { id: 1, type: 'cedula', label: 'Cédula del consultante', uploaded: false },
@@ -28,10 +30,10 @@ export class UploadDocumentsComponent {
     if (!file) return;
 
     const datos = this.datosService.obtenerDatos();
-    
+
 
     if (!datos.consultationId) {
-      alert('Error: No hay trámite seleccionado.');
+      this.notification.showError('No hay un trámite seleccionado para subir documentos.');
       return;
     }
 
@@ -40,7 +42,7 @@ export class UploadDocumentsComponent {
         const doc = this.docs.find(d => d.type === docType);
         if (doc) doc.uploaded = true;
       },
-      error: (err) => alert('Error subiendo archivo')
+      error: (err) => this.notification.showError('Hubo un error al subir el archivo. Intenta nuevamente.')
     });
   }
 
@@ -50,7 +52,7 @@ export class UploadDocumentsComponent {
 
   continuar(): void {
     if (this.allUploaded) {
-      this.router.navigate(['/contrato']); 
+      this.router.navigate(['/contrato']);
     }
   }
 }

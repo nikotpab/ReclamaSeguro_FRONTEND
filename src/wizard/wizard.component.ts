@@ -27,7 +27,7 @@ export class WizardComponent {
 
   seleccionarTipo(tipo: string) {
     this.tipoConsulta = tipo;
-    
+
     const fields = ['nombreFallecido', 'tipoDocumento', 'numeroDocumento', 'fechaFallecimiento', 'parentesco'];
 
     if (tipo === 'fallecido') {
@@ -46,8 +46,7 @@ export class WizardComponent {
   onSubmit() {
     this.enviado = true;
     if (this.tipoConsulta && this.stepForm.valid) {
-      console.log('Tipo:', this.tipoConsulta);
-      console.log('Datos:', this.stepForm.value);
+
       this.router.navigate(['registro']);
     }
   }
