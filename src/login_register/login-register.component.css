@@ -147,3 +147,37 @@
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+
+/* Estilo especial para la ventana de verificación */
+.verification-box {
+  animation: fadeIn 0.3s ease-in-out;
+  text-align: center;
+}
+
+.code-input-wrapper {
+  margin: 20px 0;
+}
+
+.input-code {
+  width: 100%;
+  padding: 15px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  letter-spacing: 8px; /* Separa las letras del código */
+  text-align: center;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  text-transform: uppercase;
+  transition: border-color 0.3s;
+}
+
+.input-code:focus {
+  border-color: #3498db;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
