@@ -6,10 +6,6 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ApiService {
-  put: any;
-  post(arg0: string, payload: { email: string; code: string; }) {
-    throw new Error('Method not implemented.');
-  }
   private http = inject(HttpClient);
   private baseUrl = 'http://localhost:8080/api';
 
