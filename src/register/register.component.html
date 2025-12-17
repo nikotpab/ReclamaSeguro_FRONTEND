@@ -1,85 +1,59 @@
-<div class="wizard-container">
+<div class="register-container">
   
-  <div class="progress-section">
-    <div class="progress-bar-bg">
-      <div class="progress-bar-fill" style="width: 50%;"></div>
-    </div>
-    <p class="step-indicator">Paso 2 de 4: Creación de cuenta</p>
-  </div>
-
-  <div class="header-section">
-    <h2>Cree su acceso para ver el resultado de la búsqueda.</h2>
-    <p>Asegure que no se pierda el avance de su consulta.</p>
-  </div>
-
-  <form [formGroup]="accountForm" (ngSubmit)="onSubmit()">
+  <div *ngIf="step === 1" class="register-box">
+    <h2>Crear Cuenta</h2>
     
     <div class="form-group">
-      <label>Correo electrónico</label>
-      <input type="email" formControlName="email" class="readonly-input">
+      <label>Nombre Completo</label>
+      <input type="text" [(ngModel)]="user.fullName" placeholder="Ej. Juan Pérez">
     </div>
 
     <div class="form-group">
-      <label>Crear contraseña</label>
-      <div class="password-wrapper">
-        <input 
-          [type]="passwordVisible ? 'text' : 'password'" 
-          formControlName="password" 
-          placeholder="Mínimo 6 caracteres" 
-          [class.error]="enviado && f['password'].errors">
-        
-        <button type="button" class="toggle-btn" (click)="togglePasswordVisibility()">
-          {{ passwordVisible ? 'Ocultar' : 'Ver' }}
-        </button>
-      </div>
-      <small *ngIf="enviado && f['password'].errors?.['required']" class="error-msg">
-        La contraseña es requerida.
-      </small>
-      <small *ngIf="enviado && f['password'].errors?.['minlength']" class="error-msg">
-        Mínimo 6 caracteres.
-      </small>
+      <label>Correo Electrónico</label>
+      <input type="email" [(ngModel)]="user.email" placeholder="correo@ejemplo.com">
     </div>
 
     <div class="form-group">
-      <label>Confirmar contraseña</label>
-      <input 
-        [type]="passwordVisible ? 'text' : 'password'" 
-        formControlName="confirmPassword" 
-        placeholder="Repita su contraseña" 
-        [class.error]="(enviado || f['confirmPassword'].touched) && f['confirmPassword'].errors">
-      
-      <small *ngIf="(enviado || f['confirmPassword'].touched) && f['confirmPassword'].errors?.['required']" class="error-msg">
-        Confirme la contraseña.
-      </small>
-      <small *ngIf="(enviado || f['confirmPassword'].touched) && f['confirmPassword'].errors?.['mismatch']" class="error-msg">
-        Las contraseñas no coinciden.
-      </small>
+      <label>Teléfono</label>
+      <input type="text" [(ngModel)]="user.phone" placeholder="300 123 4567">
+    </div>
+    
+    <div class="form-group">
+        <label>Cédula</label>
+        <input type="text" [(ngModel)]="user.cedula" placeholder="1234567890">
     </div>
 
-    <div class="form-group checkbox-group">
-      <input type="checkbox" id="terms" formControlName="terms">
-      <label for="terms">
-        Acepto <a href="#" (click)="abrirModal($event)">términos y condiciones</a> y el tratamiento de datos.
-      </label>
-    </div>
-    <small *ngIf="enviado && f['terms'].errors" class="error-msg center-msg">Debe aceptar los términos para continuar.</small>
-
-    <div class="actions">
-      <button type="submit" class="btn-continuar">Crear cuenta y continuar</button>
+    <div class="form-group">
+      <label>Contraseña</label>
+      <input type="password" [(ngModel)]="user.password" placeholder="********">
     </div>
 
-  </form>
-</div>
+    <div class="form-group">
+      <label>Confirmar Contraseña</label>
+      <input type="password" [(ngModel)]="user.confirmPassword" placeholder="********">
+    </div>
 
-<div class="modal-overlay" *ngIf="mostrarModal">
-  <div class="modal-content">
-    <h3>Términos y Condiciones</h3>
-    <div class="modal-body">
-      <p><strong>Términos y condiciones:</strong> Términos y condiciones</p>
-    </div>
-    <div class="modal-actions">
-      <button type="button" class="btn-secondary" (click)="cerrarModal()">Cerrar</button>
-      <button type="button" class="btn-primary" (click)="aceptarTerminosDesdeModal()">Aceptar y Cerrar</button>
-    </div>
+    <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
+
+<button type="button" class="btn-primary" (click)="register()" [disabled]="isLoading">
+  {{ isLoading ? 'Enviando...' : 'Registrarse' }}
+</button>
   </div>
+
+ <div *ngIf="step === 2" class="card-box">
+        <div style="font-size: 3rem; margin-bottom: 1rem;">🛡️</div>
+        <h2>Verificación</h2>
+        <p>Ingresa el código que enviamos a<br><strong>{{ user.email }}</strong></p>
+        
+        <input type="text" [(ngModel)]="verificationCode" class="code-input" placeholder="······" maxlength="6">
+        
+        <button class="btn-primary" (click)="verifyCode()" [disabled]="isLoading">
+            {{ isLoading ? 'Validando...' : 'Confirmar Código' }}
+        </button>
+
+        <div class="link-text">
+            ¿No llegó? <a (click)="step=1">Cambiar correo</a> o Reenviar
+        </div>
+    </div>
+
 </div>
