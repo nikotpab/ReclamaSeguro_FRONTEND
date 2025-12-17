@@ -8,14 +8,14 @@ import { Router } from '@angular/router';
 })
 export class HomeComponent {
 
-  constructor(private router: Router) {}
+  constructor(private router: Router) { }
 
-  
+
   irALogin(): void {
-    this.router.navigate(['/autenticacion']);
+    this.router.navigate(['/autenticacion'], { queryParams: { mode: 'login' } });
   }
 
   irARegistro(): void {
-    this.router.navigate(['/autenticacion']);
+    this.router.navigate(['/autenticacion'], { queryParams: { mode: 'register' } });
   }
 }

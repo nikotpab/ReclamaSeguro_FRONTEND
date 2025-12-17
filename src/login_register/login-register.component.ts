@@ -1,9 +1,10 @@
-import { Component, inject, ChangeDetectorRef } from '@angular/core';
+import { Component, inject, ChangeDetectorRef, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { ApiService } from '../app/services/api.service';
 import { DatosCompartidosService } from '../app/services/shared-data.service';
+import { NotificationService } from '../app/services/notification.service';
 import { finalize } from 'rxjs/operators';
 import { NgZone } from '@angular/core';
 
@@ -15,26 +16,28 @@ import { NgZone } from '@angular/core';
   templateUrl: './login-register.component.html',
   styleUrls: ['./login-register.component.css']
 })
-export class AuthComponent {
-  
+export class AuthComponent implements OnInit {
+
   isLoginMode: boolean = true;
   isSubmitting: boolean = false;
-  showVerification: boolean = false; 
+  showVerification: boolean = false;
   private zone = inject(NgZone);
 
-  
+
   loginForm: FormGroup;
   registerForm: FormGroup;
-  verificationControl: FormControl; 
-  
+  verificationControl: FormControl;
+
   passwordVisible: boolean = false;
 
-  
+
   private fb = inject(FormBuilder);
   private apiService = inject(ApiService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private datosService = inject(DatosCompartidosService);
-  private cd = inject(ChangeDetectorRef); 
+  private cd = inject(ChangeDetectorRef);
+  private notification = inject(NotificationService);
 
   constructor() {
     this.loginForm = this.fb.group({
@@ -44,13 +47,28 @@ export class AuthComponent {
 
     this.registerForm = this.fb.group({
       fullName: ['', [Validators.required, Validators.minLength(3)]],
-      cedula: ['', [Validators.required, Validators.minLength(5)]],
+      cedula: ['', [Validators.required, Validators.pattern(/^[0-9]{6,12}$/)]],
       email: ['', [Validators.required, Validators.email]],
-      phone: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
+      phone: ['', [Validators.required, Validators.pattern(/^3[0-9]{9}$/)]],
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
 
     this.verificationControl = new FormControl('', [Validators.required, Validators.minLength(6)]);
+  }
+
+  ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      if (params['mode'] === 'verify' && params['email']) {
+        this.showVerification = true;
+        this.registerForm.patchValue({ email: params['email'] });
+      } else if (params['mode'] === 'register') {
+        this.isLoginMode = false;
+        this.showVerification = false;
+      } else {
+        this.isLoginMode = true;
+        this.showVerification = false;
+      }
+    });
   }
 
   toggleMode(): void {
@@ -59,6 +77,13 @@ export class AuthComponent {
     this.loginForm.reset();
     this.registerForm.reset();
     this.verificationControl.reset();
+  }
+
+  onlyNumbers(event: any): void {
+    const input = event.target as HTMLInputElement;
+    input.value = input.value.replace(/[^0-9]/g, '');
+    // Trigger input event for reactive forms
+    input.dispatchEvent(new Event('input'));
   }
 
   togglePasswordVisibility(): void {
@@ -73,70 +98,69 @@ export class AuthComponent {
     }
   }
 
-  
+
   private handleLogin(): void {
     if (this.loginForm.invalid) return;
-    
+
     this.isSubmitting = true;
     const credentials = this.loginForm.value;
 
     this.apiService.login(credentials)
       .pipe(finalize(() => {
         this.isSubmitting = false;
-        this.cd.detectChanges(); 
+        this.cd.detectChanges();
       }))
       .subscribe({
         next: (res: any) => {
           this.datosService.guardarDatos({ userId: res.id, email: res.email });
-          
-          if(credentials.email === 'admin@gmail.com' && credentials.password === '123456'){
+
+          if (credentials.email === 'admin@gmail.com' && credentials.password === '123456') {
             this.router.navigate(['/administrador']);
           } else {
             this.router.navigate(['/panel-usuario']);
           }
         },
         error: (err) => {
-          alert(err.error?.error || 'Credenciales incorrectas o cuenta no verificada');
+          this.notification.showError(err.error?.error || 'Credenciales incorrectas o cuenta no verificada. Intenta nuevamente.');
+          this.isSubmitting = false;
         }
       });
   }
 
-  
+
   private handleRegister(): void {
     if (this.registerForm.invalid) return;
 
     this.isSubmitting = true;
     const userData = this.registerForm.value;
 
-    console.log("🚀 Enviando datos de registro...");
+
 
     this.apiService.registerUser(userData)
       .pipe(finalize(() => {
         this.isSubmitting = false;
-        this.cd.detectChanges(); 
+        this.cd.detectChanges();
       }))
       .subscribe({
         next: () => {
-  console.log("✅ Registro OK. Activando vista de código.");
-
-  this.zone.run(() => {
-    this.showVerification = true;
-  });
-},
+          this.zone.run(() => {
+            this.showVerification = true;
+          });
+        },
         error: (err) => {
-          console.error("❌ Error registro:", err);
-          alert(err.error?.error || 'Error en el registro. Verifique los datos.');
+          this.notification.showError(err.error?.error || 'Error en el registro. Verifique que los datos sean correctos.');
+          this.isSubmitting = false;
         }
       });
   }
 
-  
+
   verifyCode(): void {
     if (this.verificationControl.invalid) return;
 
     this.isSubmitting = true;
     const payload = {
-      email: this.registerForm.get('email')?.value, 
+      email: this.registerForm.get('email')?.value,
       code: this.verificationControl.value
     };
 
@@ -147,14 +171,15 @@ export class AuthComponent {
       }))
       .subscribe({
         next: (res) => {
-          alert('¡Cuenta verificada! Ahora inicia sesión.');
-          
+          this.notification.showSuccess('¡Cuenta verificada! Ahora inicia sesión para continuar.');
+
           this.showVerification = false;
           this.isLoginMode = true;
           this.cd.detectChanges();
         },
         error: (err) => {
-          alert(err.error?.error || 'Código incorrecto');
+          this.notification.showError(err.error?.error || 'Código incorrecto. Verifica el código enviado a tu correo.');
+          this.isSubmitting = false;
         }
       });
   }

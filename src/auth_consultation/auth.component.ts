@@ -4,6 +4,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { DatosCompartidosService } from '../app/services/shared-data.service';
+import { NotificationService } from '../app/services/notification.service';
 
 @Component({
   selector: 'app-paso-tres',
@@ -14,19 +15,19 @@ import { DatosCompartidosService } from '../app/services/shared-data.service';
 })
 export class Authorization implements AfterViewInit {
   @ViewChild('signatureCanvas') canvasRef!: ElementRef<HTMLCanvasElement>;
-  
+
   signatureForm: FormGroup;
   private cx!: CanvasRenderingContext2D | null;
   private http = inject(HttpClient);
   private datosService = inject(DatosCompartidosService);
-  
+
   isDrawing = false;
   hasSigned = false;
   mostrarModal = false;
   enviado = false;
   isSubmitting = false;
 
-  constructor(private fb: FormBuilder, private router: Router) {
+  constructor(private fb: FormBuilder, private router: Router, private notification: NotificationService) {
     this.signatureForm = this.fb.group({
       authorization: [false, Validators.requiredTrue]
     });
@@ -36,7 +37,7 @@ export class Authorization implements AfterViewInit {
     setTimeout(() => {
       const canvasEl: HTMLCanvasElement = this.canvasRef.nativeElement;
       this.cx = canvasEl.getContext('2d');
-      
+
       canvasEl.width = canvasEl.offsetWidth;
       canvasEl.height = canvasEl.offsetHeight;
 
@@ -52,12 +53,12 @@ export class Authorization implements AfterViewInit {
       const oldImage = canvasEl.toDataURL();
       canvasEl.width = canvasEl.offsetWidth;
       canvasEl.height = canvasEl.offsetHeight;
-      
+
       if (this.cx) {
         this.cx.lineWidth = 3;
         this.cx.lineCap = 'round';
         this.cx.strokeStyle = '#000';
-        
+
         const img = new Image();
         img.src = oldImage;
         img.onload = () => this.cx?.drawImage(img, 0, 0);
@@ -70,7 +71,7 @@ export class Authorization implements AfterViewInit {
     const { x, y } = this.getPosition(event);
     this.cx?.beginPath();
     this.cx?.moveTo(x, y);
-    event.preventDefault(); 
+    event.preventDefault();
   }
 
   draw(event: MouseEvent | TouchEvent): void {
@@ -126,7 +127,7 @@ export class Authorization implements AfterViewInit {
 
     if (this.signatureForm.valid && this.hasSigned) {
       this.isSubmitting = true;
-      
+
       const canvasEl = this.canvasRef.nativeElement;
       const signatureBase64 = canvasEl.toDataURL('image/webp', 0.5);
 
@@ -134,7 +135,7 @@ export class Authorization implements AfterViewInit {
       const consultationId = datosUsuario.consultationId;
 
       if (!consultationId) {
-        alert('Error: No hay ID de consulta. Complete el paso 1 nuevamente.');
+        this.notification.showError('No se encontró el ID de la consulta. Por favor intenta volver a empezar el proceso.');
         this.isSubmitting = false;
         return;
       }
@@ -146,12 +147,12 @@ export class Authorization implements AfterViewInit {
       this.http.post(`http://localhost:8080/api/consultations/${consultationId}/sign`, payload)
         .subscribe({
           next: (res) => {
-            console.log('Firma guardada correctamente:', res);
+
             this.router.navigate(['pago']);
           },
           error: (err) => {
             console.error('Error al guardar firma:', err);
-            alert('Error al guardar la firma. Intente nuevamente.');
+            this.notification.showError('Ocurrió un error al guardar tu firma. Por favor intenta nuevamente.');
             this.isSubmitting = false;
           }
         });

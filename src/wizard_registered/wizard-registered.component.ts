@@ -4,6 +4,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { Router } from '@angular/router';
 import { ApiService } from '../app/services/api.service'
 import { DatosCompartidosService } from '../app/services/shared-data.service';
+import { NotificationService } from '../app/services/notification.service';
 
 @Component({
   selector: 'app-wizard-registered',
@@ -20,9 +21,10 @@ export class WizardComponentRegistered {
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private api = inject(ApiService);
-  
-  
+
+
   private datosService = inject(DatosCompartidosService);
+  private notification = inject(NotificationService);
 
   constructor() {
     this.consultaForm = this.fb.group({
@@ -35,8 +37,8 @@ export class WizardComponentRegistered {
     });
   }
 
-  get f() { 
-    return this.consultaForm.controls; 
+  get f() {
+    return this.consultaForm.controls;
   }
 
   get tipoConsulta() {
@@ -45,47 +47,47 @@ export class WizardComponentRegistered {
 
   seleccionarTipo(tipo: string): void {
     this.consultaForm.patchValue({ tipoConsulta: tipo });
-    
-    
+
+
     if (tipo === 'propio') {
-       
+
     }
   }
 
- onSubmit(): void {
+  onSubmit(): void {
     this.enviado = true;
 
-    
+
     if (this.tipoConsulta === 'fallecido' && this.consultaForm.invalid) {
       return;
     }
 
     this.isSubmitting = true;
 
-    
+
     const datosUsuario = this.datosService.obtenerDatos() as any;
-    
+
     if (!datosUsuario || !datosUsuario.userId) {
-      alert('Su sesión ha expirado.');
+      this.notification.showInfo('Tu sesión ha expirado. Por favor inicia sesión nuevamente.');
       this.router.navigate(['/auth']);
       return;
     }
 
     const formValues = this.consultaForm.value;
-    
-    
-    
+
+
+
     let nombreFinal = '';
     let docFinal = '';
     let parentezcoFinal = '';
 
     if (formValues.tipoConsulta === 'propio') {
-      
+
       nombreFinal = datosUsuario.fullName ? datosUsuario.fullName + ' (Propio)' : 'Consulta a Título Personal';
-      docFinal = 'CC'; 
+      docFinal = 'CC';
       parentezcoFinal = 'YO';
     } else {
-      
+
       nombreFinal = formValues.nombreFallecido;
       docFinal = formValues.numeroDocumento;
       parentezcoFinal = formValues.parentesco;
@@ -93,30 +95,26 @@ export class WizardComponentRegistered {
 
     const consultationData = {
       userId: datosUsuario.userId,
-      type: formValues.tipoConsulta, 
-      deceasedName: nombreFinal,     
+      type: formValues.tipoConsulta,
+      deceasedName: nombreFinal,
       docType: formValues.tipoDocumento || 'CC',
-      docNumber: docFinal,           
-      deathDate: formValues.fechaFallecimiento, 
+      docNumber: docFinal,
+      deathDate: formValues.fechaFallecimiento,
       kinship: parentezcoFinal
     };
 
-    console.log('Enviando consulta corregida...', consultationData);
-
     this.api.createConsultation(consultationData).subscribe({
       next: (res: any) => {
-        console.log('ID Creado:', res.id);
-        
-        this.datosService.guardarDatos({ 
+
+        this.datosService.guardarDatos({
           consultationId: res.id,
-          nombreFallecido: nombreFinal 
+          nombreFallecido: nombreFinal
         });
 
         this.router.navigate(['/autorizar']);
       },
       error: (err: any) => {
-        console.error(err);
-        alert('Error al crear trámite.');
+        this.notification.showError('No se pudo crear el trámite. Verifique los datos e intente nuevamente.');
         this.isSubmitting = false;
       }
     });

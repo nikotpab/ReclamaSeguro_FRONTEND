@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { ApiService } from '../app/services/api.service';
 import { DatosCompartidosService } from '../app/services/shared-data.service';
+import { NotificationService } from '../app/services/notification.service';
 
 @Component({
   selector: 'app-paso-cuatro',
@@ -15,7 +16,8 @@ export class Payment {
   private router = inject(Router);
   private apiService = inject(ApiService);
   private datosService = inject(DatosCompartidosService);
-  
+  private notification = inject(NotificationService);
+
   selectedMethod: string = 'credit-card';
   isProcessing: boolean = false;
 
@@ -25,19 +27,19 @@ export class Payment {
 
   processPayment(): void {
     this.isProcessing = true;
-    
+
     const datos = this.datosService.obtenerDatos();
     const consultationId = datos.consultationId;
 
     if (!consultationId) {
-      alert('Error: No se encontró el número de trámite. Vuelva a iniciar.');
+      this.notification.showError('No se encontró información del trámite. Por favor inicia nuevamente.');
       this.isProcessing = false;
       return;
     }
 
     this.apiService.processPayment(consultationId).subscribe({
       next: (res) => {
-        console.log('Backend:', res);
+
         setTimeout(() => {
           this.isProcessing = false;
           this.router.navigate(['solicitudes']);
@@ -45,7 +47,7 @@ export class Payment {
       },
       error: (err) => {
         console.error('Error en pago:', err);
-        alert('Hubo un error procesando el pago.');
+        this.notification.showError('Hubo un problema al procesar el pago. Intenta más tarde.');
         this.isProcessing = false;
       }
     });
