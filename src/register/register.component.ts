@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { ApiService } from '../app/services/api.service';
 import { NotificationService } from '../app/services/notification.service';
+import { DatosCompartidosService } from '../app/services/shared-data.service'; // Import SharedDataService
 
 import { timeout, catchError, finalize } from 'rxjs/operators';
 import { of, throwError, TimeoutError } from 'rxjs';
@@ -30,7 +31,24 @@ export class Register {
   isLoading: boolean = false;
   errorMessage: string = '';
 
-  constructor(private apiService: ApiService, private router: Router, private notification: NotificationService) { }
+  constructor(
+    private apiService: ApiService,
+    private router: Router,
+    private notification: NotificationService,
+    private datosShared: DatosCompartidosService // Inject
+  ) { }
+
+  ngOnInit(): void {
+    // Check for pre-register data from Landing Page
+    const preData = this.datosShared.obtenerDatos().preRegisterData;
+    if (preData) {
+      this.user.fullName = preData.fullName || '';
+      this.user.email = preData.email || '';
+      this.user.phone = preData.phone || '';
+
+      // Clear sensitive/temporary data if desired, but keep for now
+    }
+  }
 
   onlyNumbers(event: any): void {
     const input = event.target as HTMLInputElement;

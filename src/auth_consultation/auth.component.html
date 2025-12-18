@@ -1,5 +1,5 @@
 <div class="wizard-container">
-  
+
   <div class="progress-section">
     <div class="progress-bar-bg">
       <div class="progress-bar-fill" style="width: 75%;"></div>
@@ -17,13 +17,8 @@
   <div class="signature-area">
     <label>Firme en el recuadro blanco:</label>
     <div class="canvas-wrapper" [class.error-border]="enviado && !hasSigned">
-      <canvas #signatureCanvas
-        (mousedown)="startDrawing($event)"
-        (mousemove)="draw($event)"
-        (mouseup)="stopDrawing()"
-        (mouseleave)="stopDrawing()"
-        (touchstart)="startDrawing($event)"
-        (touchmove)="draw($event)"
+      <canvas #signatureCanvas (mousedown)="startDrawing($event)" (mousemove)="draw($event)" (mouseup)="stopDrawing()"
+        (mouseleave)="stopDrawing()" (touchstart)="startDrawing($event)" (touchmove)="draw($event)"
         (touchend)="stopDrawing()">
       </canvas>
       <div class="signature-placeholder" *ngIf="!hasSigned && !isDrawing">Firme aquí</div>
@@ -35,17 +30,19 @@
   </div>
 
   <form [formGroup]="signatureForm" (ngSubmit)="onSubmit()">
-    
+
     <div class="form-group checkbox-group">
       <input type="checkbox" id="auth" formControlName="authorization">
       <label for="auth">
-        Autorizo a <strong>[Nombre de la empresa]</strong> a consultar en mi nombre ante las compañías de seguros, exclusivamente para verificar la existencia de pólizas.
+        Autorizo a <strong>[Nombre de la empresa]</strong> a consultar en mi nombre ante las compañías de seguros,
+        exclusivamente para verificar la existencia de pólizas.
       </label>
     </div>
-    <small *ngIf="enviado && f['authorization'].errors" class="error-msg center-msg">Debe marcar la casilla de autorización para continuar.</small>
+    <small *ngIf="enviado && f['authorization'].errors" class="error-msg center-msg">Debe marcar la casilla de
+      autorización para continuar.</small>
 
     <div class="actions">
-      <button type="submit" class="btn-continuar">Aceptar y continuar</button>
+      <button type="submit" class="btn-continuar">Firmar y continuar</button>
     </div>
 
   </form>

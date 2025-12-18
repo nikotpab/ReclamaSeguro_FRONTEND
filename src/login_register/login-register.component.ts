@@ -69,6 +69,19 @@ export class AuthComponent implements OnInit {
         this.showVerification = false;
       }
     });
+
+    // Check query params to auto-switch to register if coming from wizard (indirectly)
+    // or if we have pre-filled data
+    const preData = this.datosService.obtenerDatos().preRegisterData;
+    if (preData && !this.showVerification) {
+      this.registerForm.patchValue({
+        fullName: preData.fullName,
+        email: preData.email,
+        phone: preData.phone
+      });
+      // You might want to switch to register mode implicitly if data is present
+      // But let's respect the 'mode' param primarily. If user clicks "Register" in Wizard, they go to /registro (old) or /autenticacion?mode=register
+    }
   }
 
   toggleMode(): void {
